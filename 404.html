@@ -1,166 +1,71 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>404 ACCESS DENIED | Namsommut Investigation</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 ACCESS DENIED | Namsommut Investigation</title>
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/main.css">
 
-  <link rel="stylesheet" href="assets/css/main.css">
-  <link rel="stylesheet" href="assets/css/theme.css">
-
-  <style>
-:root {
-    --glitch-red: #ff4d4d;
-    --glitch-blue: #007bff;
-    --terminal-green: #00ff41;
-  }
-
-    .error-page {
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(circle at center, #111112 0%, #000000 100%);
-      overflow: hidden;
-      position: relative;
-    }
-
-    /* Scanline Effect */
-    .error-page::before {
-      content: " ";
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
-      linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-      z-index: 2;
-      background-size: 100% 2px, 3px 100%;
-      pointer-events: none;
-    }
-
-    .glitch {
-      font-size: clamp(5rem, 15vw, 10rem);
-      font-weight: 900;
-      position: relative;
-      color: #fff;
-      font-family: 'JetBrains Mono', monospace;
-      text-shadow: 0.05em 0 0 var(--glitch-blue), -0.025em -0.05em 0 var(--glitch-red),
-      0.025em 0.05em 0 #00d4ff;
-      animation: glitch 700ms infinite;
-    }
-
-    @keyframes glitch {
-      0% {
-        text-shadow: 0.05em 0 0 var(--glitch-blue), -0.05em -0.025em 0 var(--glitch-red);
-        transform: translate(0);
-      }
-      15% {
-        text-shadow: -0.05em -0.025em 0 var(--glitch-blue), 0.025em 0.025em 0 var(--glitch-red);
-        transform: translate(-2px, 2px);
-      }
-      50% {
-        text-shadow: 0.025em 0.05em 0 var(--glitch-blue), 0.05em 0 0 var(--glitch-red);
-        transform: translate(2px, -2px);
-      }
-      100% {
-        text-shadow: -0.025em 0 0 var(--glitch-blue), -0.025em -0.025em 0 var(--glitch-red);
-        transform: translate(0);
-      }
-    }
-
-    .terminal-box {
-      background: rgba(0, 0, 0, 0.8);
-      border: 1px solid rgba(0, 123, 255, 0.3);
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 20px rgba(0, 123, 255, 0.1);
-    }
-
-    .status-blink {
-      width: 8px;
-      height: 8px;
-      background-color: var(--glitch-red);
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 10px;
-      animation: blink 1s infinite;
-    }
-
-    @keyframes blink {
-      0%, 100% {
-        opacity: 1;
-      }
-      50% {
-        opacity: 0;
-      }
-    }
-  </style>
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle, #0a0a0c 0%, #050505 100%);
+            overflow: hidden;
+        }
+        .error-code {
+            font-size: 10rem;
+            font-weight: 800;
+            line-height: 1;
+            color: rgba(255, 255, 255, 0.03);
+            position: absolute;
+            z-index: 0;
+        }
+        .terminal-box {
+            z-index: 1;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.1);
+        }
+        .glitch-text {
+            color: #ff4d4d;
+            text-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
+        }
+    </style>
 </head>
-<body class="bg-dark text-white">
+<body class="font-monospace">
 
-  <div class="error-page text-center p-4">
-    <div class="container position-relative" style="z-index: 3;">
-      <div class="glitch mb-2">
-        404
-      </div>
+    <div class="error-code">404</div>
 
-      <h2 class="fw-bold text-gradient-blue mb-4">ACCESS_DENIED // พิกัดถูกทำลาย</h2>
-
-      <div class="row justify-content-center mb-5">
-        <div class="col-md-8 col-lg-6">
-          <div class="terminal-box font-monospace text-start">
-            <div class="d-flex align-items-center mb-2">
-              <span class="status-blink"></span>
-              <span class="text-danger small fw-bold">SIGNAL INTERRUPTED</span>
+    <div class="terminal-box glass-card p-5 text-center">
+        <i class="bi bi-exclamation-triangle-fill display-1 glitch-text mb-4"></i>
+        
+        <h2 class="fw-bold text-white mb-3">ACCESS_DENIED</h2>
+        
+        <div class="text-muted small mb-4 lh-lg">
+            <p>ระบบตรวจพบการพยายามเข้าถึงไฟล์ที่ไม่มีอยู่จริง หรือคุณไม่มีสิทธิ์การเข้าถึงในเลเยอร์นี้ (Unauthorized Layer)</p>
+            <div class="p-2 bg-dark rounded border border-white border-opacity-5 text-start mt-3">
+                <code>> ERROR_CODE: 0x404_NOT_FOUND</code><br>
+                <code>> IP_LOGGED: TRACE_ACTIVE</code><br>
+                <code>> STATUS: REDIRECT_REQUIRED</code>
             </div>
-            <p class="text-muted small mb-2">
-              > ข้อมูลที่คุณพยายามเรียกดูถูกย้ายไปยัง "เซิร์ฟเวอร์สำรอง" หรือถูกลบเพื่อป้องกันการติดตามร่องรอย (Anti-Trace)
-            </p>
-            <p class="text-muted small mb-0">
-              > Error Log: <span id="error-log" class="text-primary"></span>
-            </p>
-          </div>
         </div>
-      </div>
 
-      <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
-        <a href="index.html" class="btn btn-primary rounded-pill px-5 py-3 fw-bold">
-          <i class="bi bi-shield-shaded me-2"></i> กลับศูนย์บัญชาการ
+        <a href="index.html" class="btn btn-outline-danger rounded-pill px-4 py-2 font-monospace x-small fw-bold">
+            <i class="bi bi-arrow-left me-2"></i>RETURN_TO_HOME
         </a>
-        <a href="contact.html" class="btn btn-outline-light rounded-pill px-5 py-3">
-          <i class="bi bi-exclamation-triangle me-2"></i> รายงานความผิดปกติ
-        </a>
-      </div>
-
-      <div class="mt-5 opacity-25">
-        <small class="font-monospace x-small text-uppercase tracking-widest">Namsommut Internal Security Protocol v4.0.4</small>
-      </div>
     </div>
-  </div>
 
-  <script>
-    /**
-    * กิมมิคข้อความ Error แบบสุ่มเพื่อสร้างความสมจริง
-    */
-    const errorLogs = [
-      "DIR_REDACTED_BY_ADMIN",
-      "ENCRYPTED_NODE_NOT_FOUND",
-      "TRACE_DETECTION_TRIGGERED",
-      "UPLINK_TIMEOUT_EXCEEDED",
-      "UNAUTHORIZED_BYPASS_ATTEMPT"
-    ];
+    <div class="position-absolute top-0 start-0 w-100 h-100 pointer-events-none opacity-25" 
+         style="background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.05) 3px); z-index: 0;">
+    </div>
 
-    document.getElementById('error-log').innerText = errorLogs[Math.floor(Math.random() * errorLogs.length)];
-
-    // เพิ่มลูกเล่นเสียง static สั้นๆ (Optional - ถ้าต้องการ)
-    // window.onload = () => { console.log("System: Node Access Failed."); };
-  </script>
 </body>
 </html>

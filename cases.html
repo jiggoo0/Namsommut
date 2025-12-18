@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Archives | Namsommut Investigation</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+
+    <style>
+        :root {
+            --terminal-green: #00ff41;
+            --terminal-bg: #050505;
+        }
+
+        body {
+            background-color: var(--terminal-bg);
+            background-image: radial-gradient(circle at center, #111 0%, #050505 100%);
+        }
+
+        .case-dashboard {
+            border: 1px solid rgba(0, 123, 255, 0.2);
+            border-radius: 12px;
+            background: rgba(10, 10, 12, 0.8);
+            backdrop-filter: blur(15px);
+            overflow: hidden;
+        }
+
+        .terminal-header {
+            background: rgba(0, 123, 255, 0.1);
+            padding: 15px 25px;
+            border-bottom: 1px solid rgba(0, 123, 255, 0.2);
+        }
+
+        .status-dot {
+            height: 8px;
+            width: 8px;
+            background-color: var(--terminal-green);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            box-shadow: 0 0 8px var(--terminal-green);
+        }
+
+        /* ตารางสไตล์ Terminal */
+        .table-terminal {
+            color: #ddd;
+            margin-bottom: 0;
+        }
+
+        .table-terminal thead th {
+            color: #007bff;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            border-bottom: 2px solid rgba(0, 123, 255, 0.2);
+            padding: 15px 20px;
+        }
+
+        .table-terminal tbody td {
+            padding: 18px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            vertical-align: middle;
+        }
+
+        .case-id {
+            font-family: 'JetBrains Mono', monospace;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .badge-operation {
+            background: rgba(0, 255, 65, 0.1);
+            color: var(--terminal-green);
+            border: 1px solid rgba(0, 255, 65, 0.3);
+            font-size: 0.7rem;
+            padding: 5px 12px;
+            border-radius: 4px;
+        }
+
+        /* Glitch Animation */
+        .glitch-text {
+            animation: glitch 3s infinite;
+        }
+
+        @keyframes glitch {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            55% { opacity: 1; text-shadow: 2px 0 #ff00c1, -2px 0 #00fff9; }
+            60% { opacity: 1; text-shadow: none; }
+        }
+    </style>
+</head>
+<body class="text-white">
+
+    <div id="header-placeholder"></div>
+
+    <main class="py-5 mt-5">
+        <div class="container">
+            <div class="mb-5 animate-on-scroll">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb font-monospace small">
+                        <li class="breadcrumb-item"><a href="index.html" class="text-muted">ROOT</a></li>
+                        <li class="breadcrumb-item active text-primary" aria-current="page">CASE_ARCHIVES</li>
+                    </ol>
+                </nav>
+                <h1 class="display-5 fw-bold font-monospace glitch-text">OPERATION_LOGS</h1>
+                <p class="text-muted">บันทึกภารกิจย้อนหลัง: ข้อมูลทั้งหมดถูกลดระดับชั้นความลับเพื่อการอ้างอิงทางเทคนิค</p>
+            </div>
+
+            <div class="row g-4 mb-4 font-monospace">
+                <div class="col-6 col-md-3">
+                    <div class="p-3 border border-white border-opacity-10 rounded">
+                        <small class="text-muted d-block">TOTAL_CASES</small>
+                        <span class="fs-4 text-primary">1,248</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="p-3 border border-white border-opacity-10 rounded">
+                        <small class="text-muted d-block">SUCCESS_RATE</small>
+                        <span class="fs-4 text-primary">99.4%</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="p-3 border border-white border-opacity-10 rounded">
+                        <small class="text-muted d-block">ACTIVE_NODES</small>
+                        <span class="fs-4 text-primary">09</span>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="p-3 border border-white border-opacity-10 rounded">
+                        <small class="text-muted d-block">SECURE_LEVEL</small>
+                        <span class="fs-4 text-primary">L-4</span>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="case-dashboard shadow-lg">
+                <div class="terminal-header d-flex justify-content-between align-items-center">
+                    <div class="small font-monospace">
+                        <span class="status-dot"></span> SYSTEM_ONLINE: NODE_BKK_SECURE
+                    </div>
+                    <div class="small text-muted font-monospace">
+                        DATE: 18/12/2025
+                    </div>
+                </div>
+
+                <div id="case-history-list">
+                    <div class="p-5 text-center">
+                        <div class="spinner-border text-primary mb-3" role="status"></div>
+                        <div class="font-monospace small text-muted">DECRYPTING SECURE DATABASE...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 p-3 bg-danger bg-opacity-10 border border-danger border-opacity-25 rounded">
+                <p class="mb-0 x-small font-monospace text-danger text-center">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> 
+                    ข้อมูลในหน้านี้ถูกปกปิดบางส่วนตามนโยบายความเป็นส่วนตัว (Privacy Protocol 09). การพยายามกู้คืนข้อมูลจริงจะถูกบันทึก IP ทันที.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/render.js"></script>
+
+    <script>
+        // เรียกฟังก์ชันเรนเดอร์เฉพาะหน้านี้
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                if (typeof renderCaseHistory === 'function') {
+                    renderCaseHistory();
+                }
+            }, 800);
+        });
+    </script>
+</body>
+</html>

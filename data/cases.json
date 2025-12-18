@@ -1,0 +1,29 @@
+[
+  {
+    "id": "NSM-7702-X",
+    "codename": "Ghost Shadow",
+    "category": "Asset Tracking",
+    "status": "COMPLETED",
+    "timestamp": "2025-11-15 14:20",
+    "location": "Bangkok / Cyber Space",
+    "risk_level": "High"
+  },
+  {
+    "id": "NSM-8194-B",
+    "codename": "Deep Dive Nominee",
+    "category": "Corporate Intel",
+    "status": "COMPLETED",
+    "timestamp": "2025-12-05 09:45",
+    "location": "Cayman Islands (Remote)",
+    "risk_level": "Critical"
+  },
+  {
+    "id": "NSM-1205-S",
+    "codename": "Silent Signal",
+    "category": "Digital Forensic",
+    "status": "SUCCESS",
+    "timestamp": "2025-12-10 23:12",
+    "location": "Private Network",
+    "risk_level": "Medium"
+  }
+]

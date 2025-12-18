@@ -1,146 +1,131 @@
 /**
- * Namsommut Investigation - Main Style Engine
- * 🛡️ Theme: Elite Dark / Cyber Noir
- * 🟢 Version: 2.0.1
+ * Namsommut Investigation - Main Stylesheet
+ * 🛠️ Function: Core Layout, Typography, and Global Styling
+ * 🟢 Status: Production Ready (Compatible with Utils.js & Render.js)
  */
 
-/* 1. Root Variables & Reset */
 :root {
-    --primary-color: #007bff;
-    --primary-glow: rgba(0, 123, 255, 0.5);
     --bg-dark: #050505;
-    --bg-section: #0a0a0b;
-    --card-bg: #111112;
-    --text-main: #e0e0e0;
-    --text-muted: #888888;
-    --border-color: rgba(255, 255, 255, 0.08);
-    --transition-smooth: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    --bg-card: #0a0a0c;
+    --primary-blue: #007bff;
+    --primary-glow: rgba(0, 123, 255, 0.4);
+    --text-silver: #a0a0a0;
+    --text-muted: rgba(255, 255, 255, 0.5);
+    --transition-smooth: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    --glass-border: rgba(255, 255, 255, 0.08);
 }
 
+/* 1. Global Reset & Base */
 body {
     background-color: var(--bg-dark);
-    color: var(--text-main);
+    color: #ffffff;
     font-family: 'Sarabun', sans-serif;
-    line-height: 1.6;
     overflow-x: hidden;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
 }
 
-/* 2. Global Utilities */
-.tracking-widest { letter-spacing: 0.2em; }
-.tracking-tighter { letter-spacing: -1px; }
-
-.text-gradient-primary {
-    background: linear-gradient(90deg, #007bff, #00d4ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.font-monospace {
+    font-family: 'JetBrains Mono', monospace !important;
 }
 
-/* 3. Layout Components */
-.bg-dark-section {
-    background-color: var(--bg-section);
-}
-
-.backdrop-blur {
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-}
-
-/* 4. Service & Team Cards */
-.bg-card-custom {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    transition: var(--transition-smooth);
-    position: relative;
-    overflow: hidden;
-}
-
-.shadow-hover:hover {
-    transform: translateY(-10px);
-    border-color: var(--primary-color) !important;
-    box-shadow: 0 15px 40px rgba(0, 123, 255, 0.15) !important;
-}
-
-/* 5. Custom Buttons */
-.btn-primary {
-    background-color: var(--primary-color);
-    border: none;
-    font-weight: 600;
-    transition: var(--transition-smooth);
-}
-
-.btn-primary:hover {
-    background-color: #0056b3;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px var(--primary-glow);
-}
-
-/* 6. Animations & Effects */
-
-/* Scanline Effect: กิมมิคเส้นสแกนวิ่งผ่านหน้าจอ */
-body::before {
-    content: " ";
-    display: block;
-    position: fixed;
-    top: 0; left: 0; bottom: 0; right: 0;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
-    z-index: 9999;
-    background-size: 100% 2px, 3px 100%;
-    pointer-events: none;
-    opacity: 0.3;
-}
-
-/* Fade In Up */
+/* 2. Scroll Animation Classes (Working with Utils.js) */
 .animate-on-scroll {
     opacity: 0;
     transform: translateY(30px);
     transition: var(--transition-smooth);
+    will-change: opacity, transform;
 }
 
-.animate-on-scroll.visible {
+/* Class ที่ Utils.js จะแอดให้เมื่อ Scroll มาถึง */
+.animate-on-scroll.appear {
     opacity: 1;
     transform: translateY(0);
 }
 
-/* Ticker Animation for Header/Footer */
-@keyframes ticker {
-    0% { transform: translateX(100%); }
-    100% { transform: translateX(-100%); }
+/* 3. Reusable Components & Glassmorphism */
+.section-padding {
+    padding: 100px 0;
 }
 
-.animate-ticker {
-    display: inline-block;
-    animation: ticker 25s linear infinite;
+.glass-card {
+    background: rgba(15, 15, 18, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    transition: var(--transition-smooth);
 }
 
-/* Pulse Glow for LINE button */
+.glass-card:hover {
+    border-color: rgba(0, 123, 255, 0.3);
+    background: rgba(20, 20, 25, 0.8);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 123, 255, 0.1);
+}
+
+/* สไตล์สำหรับการ์ดบริการที่ดึงมาจาก Render.js */
+.bg-card-custom {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border) !important;
+    transition: var(--transition-smooth);
+}
+
+.bg-card-custom:hover {
+    transform: translateY(-10px);
+    border-color: var(--primary-blue) !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+}
+
+.text-gradient-blue {
+    background: linear-gradient(135deg, #00d4ff 0%, var(--primary-blue) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* 4. Utility Classes */
+.x-small { font-size: 0.7rem; }
+.tracking-widest { letter-spacing: 0.2em; }
+.grayscale { filter: grayscale(100%); transition: var(--transition-smooth); }
+.grayscale:hover { filter: grayscale(0%); }
+
 .shadow-pulse {
-    animation: pulse-glow 2s infinite;
+    animation: shadow-pulse 2s infinite;
 }
 
-@keyframes pulse-glow {
+@keyframes shadow-pulse {
     0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4); }
     70% { box-shadow: 0 0 0 15px rgba(0, 123, 255, 0); }
     100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
 }
 
-/* 7. Image Grayscale to Color */
-.grayscale {
-    filter: grayscale(100%) brightness(0.7);
-    transition: var(--transition-smooth);
+/* 5. Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-dark);
+}
+::-webkit-scrollbar-thumb {
+    background: #1a1a1d;
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-blue);
 }
 
-.grayscale:hover {
-    filter: grayscale(0%) brightness(1);
+/* 6. Helpers */
+.divider {
+    width: 60px;
+    height: 3px;
+    background: var(--primary-blue);
+    border-radius: 10px;
+    margin: 1.5rem 0;
 }
 
-/* 8. Responsive Adjustments */
-@media (max-width: 768px) {
-    .display-2 { font-size: 2.5rem; }
-    .display-3 { font-size: 2rem; }
-    
-    .nav-glass-modern {
-        margin: 10px !important;
-        border-radius: 20px !important;
-    }
+/* 7. Navbar Specific (For Utils.js handleScroll) */
+.navbar-scrolled {
+    background: rgba(5, 5, 5, 0.9) !important;
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid var(--glass-border);
+    padding: 0.8rem 0 !important;
 }

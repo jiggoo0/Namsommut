@@ -1,6 +1,6 @@
-# 📦 Project Summary: web-template
+# 📦 Project Summary: Namsommut
 
-> Generated on: 2025-12-18 18:58:40
+> Generated on: 2025-12-18 22:14:17
 
 ## 🗂 โครงสร้างโปรเจกต์
 
@@ -9,7 +9,7 @@
 ├── .บันทึก.md
 ├── 404.html
 ├── PROJECT_SUMMARY.md
-├── READM.md
+├── README.md
 ├── about.html
 ├── assets
 │   ├── css
@@ -19,21 +19,27 @@
 │   ├── fonts
 │   ├── img
 │   │   ├── banner.jpg
+│   │   ├── favicon.ico
 │   │   ├── logo.png
 │   │   ├── team1.jpg
 │   │   ├── team2.jpg
 │   │   └── team3.jpg
 │   └── js
 │       ├── app.js
+│       ├── config.js
+│       ├── contact-handler.js
 │       ├── render.js
 │       └── utils.js
+├── cases.html
 ├── components
+│   ├── cta.html
 │   ├── footer.html
 │   ├── header.html
-│   ├── hero.html
-│   └── navbar.html
+│   └── hero.html
 ├── contact.html
 ├── data
+│   ├── cases.json
+│   ├── logs.txt
 │   ├── reviews.json
 │   ├── services.json
 │   ├── site.json
@@ -45,10 +51,897 @@
 │   └── project-summary.sh
 └── services.html
 
-9 directories, 30 files
+9 directories, 36 files
 ```
 
 ## 📄 File Scan (แสดง 60 บรรทัดแรกของทุกไฟล์)
+
+### 📄 `.git/COMMIT_EDITMSG`
+
+```
+first commit
+```
+
+### 📄 `.git/HEAD`
+
+```
+ref: refs/heads/main
+```
+
+### 📄 `.git/MERGE_RR`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/config`
+
+```
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "origin"]
+	url = https://github.com/jiggoo0/Namsommut.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "main"]
+	remote = origin
+	merge = refs/heads/main
+```
+
+### 📄 `.git/description`
+
+```
+Unnamed repository; edit this file 'description' to name the repository.
+```
+
+### 📄 `.git/hooks/applypatch-msg.sample`
+
+```
+#!/data/data/com.termux/files/usr/bin/sh
+#
+# An example hook script to check the commit log message taken by
+# applypatch from an e-mail message.
+#
+# The hook should exit with non-zero status after issuing an
+# appropriate message if it wants to stop the commit.  The hook is
+# allowed to edit the commit message file.
+#
+# To enable this hook, rename this file to "applypatch-msg".
+
+. git-sh-setup
+commitmsg="$(git rev-parse --git-path hooks/commit-msg)"
+test -x "$commitmsg" && exec "$commitmsg" ${1+"$@"}
+:
+```
+
+### 📄 `.git/hooks/commit-msg.sample`
+
+```
+#!/data/data/com.termux/files/usr/bin/sh
+#
+# An example hook script to check the commit log message.
+# Called by "git commit" with one argument, the name of the file
+# that has the commit message.  The hook should exit with non-zero
+# status after issuing an appropriate message if it wants to stop the
+# commit.  The hook is allowed to edit the commit message file.
+#
+# To enable this hook, rename this file to "commit-msg".
+
+# Uncomment the below to add a Signed-off-by line to the message.
+# Doing this in a hook is a bad idea in general, but the prepare-commit-msg
+# hook is more suited to it.
+#
+# SOB=$(git var GIT_AUTHOR_IDENT | sed -n 's/^\(.*>\).*$/Signed-off-by: \1/p')
+# grep -qs "^$SOB" "$1" || echo "$SOB" >> "$1"
+
+# This example catches duplicate Signed-off-by lines.
+
+test "" = "$(grep '^Signed-off-by: ' "$1" |
+	 sort | uniq -c | sed -e '/^[ 	]*1[ 	]/d')" || {
+	echo >&2 Duplicate Signed-off-by lines.
+	exit 1
+}
+```
+
+### 📄 `.git/hooks/fsmonitor-watchman.sample`
+
+```
+#!/data/data/com.termux/files/usr/bin/perl
+
+use strict;
+use warnings;
+use IPC::Open2;
+
+# An example hook script to integrate Watchman
+# (https://facebook.github.io/watchman/) with git to speed up detecting
+# new and modified files.
+#
+# The hook is passed a version (currently 2) and last update token
+# formatted as a string and outputs to stdout a new update token and
+# all files that have been modified since the update token. Paths must
+# be relative to the root of the working tree and separated by a single NUL.
+#
+# To enable this hook, rename this file to "query-watchman" and set
+# 'git config core.fsmonitor .git/hooks/query-watchman'
+#
+my ($version, $last_update_token) = @ARGV;
+
+# Uncomment for debugging
+# print STDERR "$0 $version $last_update_token\n";
+
+# Check the hook interface version
+if ($version ne 2) {
+	die "Unsupported query-fsmonitor hook version '$version'.\n" .
+	    "Falling back to scanning...\n";
+}
+
+my $git_work_tree = get_working_dir();
+
+my $retry = 1;
+
+my $json_pkg;
+eval {
+	require JSON::XS;
+	$json_pkg = "JSON::XS";
+	1;
+} or do {
+	require JSON::PP;
+	$json_pkg = "JSON::PP";
+};
+
+launch_watchman();
+
+sub launch_watchman {
+	my $o = watchman_query();
+	if (is_work_tree_watched($o)) {
+		output_result($o->{clock}, @{$o->{files}});
+	}
+}
+
+sub output_result {
+	my ($clockid, @files) = @_;
+
+	# Uncomment for debugging watchman output
+	# open (my $fh, ">", ".git/watchman-output.out");
+	# binmode $fh, ":utf8";
+	# print $fh "$clockid\n@files\n";
+	# close $fh;
+```
+
+### 📄 `.git/hooks/post-update.sample`
+
+```
+#!/data/data/com.termux/files/usr/bin/sh
+#
+# An example hook script to prepare a packed repository for use over
+# dumb transports.
+#
+# To enable this hook, rename this file to "post-update".
+
+exec git update-server-info
+```
+
+### 📄 `.git/hooks/pre-applypatch.sample`
+
+```
+#!/data/data/com.termux/files/usr/bin/sh
+#
+# An example hook script to verify what is about to be committed
+# by applypatch from an e-mail message.
+#
+# The hook should exit with non-zero status after issuing an
+# appropriate message if it wants to stop the commit.
+#
+# To enable this hook, rename this file to "pre-applypatch".
+
+. git-sh-setup
+precommit="$(git rev-parse --git-path hooks/pre-commit)"
+test -x "$precommit" && exec "$precommit" ${1+"$@"}
+:
+```
+
+### 📄 `.git/hooks/pre-commit.sample`
+
+```
+#!/data/data/com.termux/files/usr/bin/sh
+#
+# An example hook script to verify what is about to be committed.
+# Called by "git commit" with no arguments.  The hook should
+# exit with non-zero status after issuing an appropriate message if
+# it wants to stop the commit.
+#
+# To enable this hook, rename this file to "pre-commit".
+
+if git rev-parse --verify HEAD >/dev/null 2>&1
+then
+	against=HEAD
+else
+	# Initial commit: diff against an empty tree object
+	against=$(git hash-object -t tree /dev/null)
+fi
+
+# If you want to allow non-ASCII filenames set this variable to true.
+allownonascii=$(git config --type=bool hooks.allownonascii)
+
+# Redirect output to stderr.
+exec 1>&2
+
+# Cross platform projects tend to avoid non-ASCII filenames; prevent
+# them from being added to the repository. We exploit the fact that the
+# printable range starts at the space character and ends with tilde.
+if [ "$allownonascii" != "true" ] &&
+	# Note that the use of brackets around a tr range is ok here, (it's
+	# even required, for portability to Solaris 10's /usr/bin/tr), since
+	# the square bracket bytes happen to fall in the designated range.
+	test $(git diff-index --cached --name-only --diff-filter=A -z $against |
+	  LC_ALL=C tr -d '[ -~]\0' | wc -c) != 0
+then
+	cat <<\EOF
+Error: Attempt to add a non-ASCII file name.
+
+This can cause problems if you want to work with people on other platforms.
+
+To be portable it is advisable to rename the file.
+
+If you know what you are doing you can disable this check using:
+
+  git config hooks.allownonascii true
+EOF
+	exit 1
+fi
+
+# If there are whitespace errors, print the offending file names and fail.
+exec git diff-index --check --cached $against --
+```
+
+### 📄 `.git/hooks/pre-merge-commit.sample`
+
+```
+#!/data/data/com.termux/files/usr/bin/sh
+#
+# An example hook script to verify what is about to be committed.
+# Called by "git merge" with no arguments.  The hook should
+# exit with non-zero status after issuing an appropriate message to
+# stderr if it wants to stop the merge commit.
+#
+# To enable this hook, rename this file to "pre-merge-commit".
+
+. git-sh-setup
+test -x "$GIT_DIR/hooks/pre-commit" &&
+        exec "$GIT_DIR/hooks/pre-commit"
+:
+```
+
+### 📄 `.git/hooks/pre-push.sample`
+
+```
+#!/data/data/com.termux/files/usr/bin/sh
+
+# An example hook script to verify what is about to be pushed.  Called by "git
+# push" after it has checked the remote status, but before anything has been
+# pushed.  If this script exits with a non-zero status nothing will be pushed.
+#
+# This hook is called with the following parameters:
+#
+# $1 -- Name of the remote to which the push is being done
+# $2 -- URL to which the push is being done
+#
+# If pushing without using a named remote those arguments will be equal.
+#
+# Information about the commits which are being pushed is supplied as lines to
+# the standard input in the form:
+#
+#   <local ref> <local oid> <remote ref> <remote oid>
+#
+# This sample shows how to prevent push of commits where the log message starts
+# with "WIP" (work in progress).
+
+remote="$1"
+url="$2"
+
+zero=$(git hash-object --stdin </dev/null | tr '[0-9a-f]' '0')
+
+while read local_ref local_oid remote_ref remote_oid
+do
+	if test "$local_oid" = "$zero"
+	then
+		# Handle delete
+		:
+	else
+		if test "$remote_oid" = "$zero"
+		then
+			# New branch, examine all commits
+			range="$local_oid"
+		else
+			# Update to existing branch, examine new commits
+			range="$remote_oid..$local_oid"
+		fi
+
+		# Check for WIP commit
+		commit=$(git rev-list -n 1 --grep '^WIP' "$range")
+		if test -n "$commit"
+		then
+			echo >&2 "Found WIP commit in $local_ref, not pushing"
+			exit 1
+		fi
+	fi
+done
+
+exit 0
+```
+
+### 📄 `.git/hooks/pre-rebase.sample`
+
+```
+#!/data/data/com.termux/files/usr/bin/sh
+#
+# Copyright (c) 2006, 2008 Junio C Hamano
+#
+# The "pre-rebase" hook is run just before "git rebase" starts doing
+# its job, and can prevent the command from running by exiting with
+# non-zero status.
+#
+# The hook is called with the following parameters:
+#
+# $1 -- the upstream the series was forked from.
+# $2 -- the branch being rebased (or empty when rebasing the current branch).
+#
+# This sample shows how to prevent topic branches that are already
+# merged to 'next' branch from getting rebased, because allowing it
+# would result in rebasing already published history.
+
+publish=next
+basebranch="$1"
+if test "$#" = 2
+then
+	topic="refs/heads/$2"
+else
+	topic=`git symbolic-ref HEAD` ||
+	exit 0 ;# we do not interrupt rebasing detached HEAD
+fi
+
+case "$topic" in
+refs/heads/??/*)
+	;;
+*)
+	exit 0 ;# we do not interrupt others.
+	;;
+esac
+
+# Now we are dealing with a topic branch being rebased
+# on top of master.  Is it OK to rebase it?
+
+# Does the topic really exist?
+git show-ref -q "$topic" || {
+	echo >&2 "No such branch $topic"
+	exit 1
+}
+
+# Is topic fully merged to master?
+not_in_master=`git rev-list --pretty=oneline ^master "$topic"`
+if test -z "$not_in_master"
+then
+	echo >&2 "$topic is fully merged to master; better remove it."
+	exit 1 ;# we could allow it, but there is no point.
+fi
+
+# Is topic ever merged to next?  If so you should not be rebasing it.
+only_next_1=`git rev-list ^master "^$topic" ${publish} | sort`
+only_next_2=`git rev-list ^master           ${publish} | sort`
+if test "$only_next_1" = "$only_next_2"
+then
+	not_in_topic=`git rev-list "^$topic" master`
+	if test -z "$not_in_topic"
+	then
+```
+
+### 📄 `.git/hooks/pre-receive.sample`
+
+```
+#!/data/data/com.termux/files/usr/bin/sh
+#
+# An example hook script to make use of push options.
+# The example simply echoes all push options that start with 'echoback='
+# and rejects all pushes when the "reject" push option is used.
+#
+# To enable this hook, rename this file to "pre-receive".
+
+if test -n "$GIT_PUSH_OPTION_COUNT"
+then
+	i=0
+	while test "$i" -lt "$GIT_PUSH_OPTION_COUNT"
+	do
+		eval "value=\$GIT_PUSH_OPTION_$i"
+		case "$value" in
+		echoback=*)
+			echo "echo from the pre-receive-hook: ${value#*=}" >&2
+			;;
+		reject)
+			exit 1
+		esac
+		i=$((i + 1))
+	done
+fi
+```
+
+### 📄 `.git/hooks/prepare-commit-msg.sample`
+
+```
+#!/data/data/com.termux/files/usr/bin/sh
+#
+# An example hook script to prepare the commit log message.
+# Called by "git commit" with the name of the file that has the
+# commit message, followed by the description of the commit
+# message's source.  The hook's purpose is to edit the commit
+# message file.  If the hook fails with a non-zero status,
+# the commit is aborted.
+#
+# To enable this hook, rename this file to "prepare-commit-msg".
+
+# This hook includes three examples. The first one removes the
+# "# Please enter the commit message..." help message.
+#
+# The second includes the output of "git diff --name-status -r"
+# into the message, just before the "git status" output.  It is
+# commented because it doesn't cope with --amend or with squashed
+# commits.
+#
+# The third example adds a Signed-off-by line to the message, that can
+# still be edited.  This is rarely a good idea.
+
+COMMIT_MSG_FILE=$1
+COMMIT_SOURCE=$2
+SHA1=$3
+
+/data/data/com.termux/files/usr/bin/perl -i.bak -ne 'print unless(m/^. Please enter the commit message/..m/^#$/)' "$COMMIT_MSG_FILE"
+
+# case "$COMMIT_SOURCE,$SHA1" in
+#  ,|template,)
+#    /data/data/com.termux/files/usr/bin/perl -i.bak -pe '
+#       print "\n" . `git diff --cached --name-status -r`
+# 	 if /^#/ && $first++ == 0' "$COMMIT_MSG_FILE" ;;
+#  *) ;;
+# esac
+
+# SOB=$(git var GIT_COMMITTER_IDENT | sed -n 's/^\(.*>\).*$/Signed-off-by: \1/p')
+# git interpret-trailers --in-place --trailer "$SOB" "$COMMIT_MSG_FILE"
+# if test -z "$COMMIT_SOURCE"
+# then
+#   /data/data/com.termux/files/usr/bin/perl -i.bak -pe 'print "\n" if !$first_line++' "$COMMIT_MSG_FILE"
+# fi
+```
+
+### 📄 `.git/hooks/push-to-checkout.sample`
+
+```
+#!/data/data/com.termux/files/usr/bin/sh
+
+# An example hook script to update a checked-out tree on a git push.
+#
+# This hook is invoked by git-receive-pack(1) when it reacts to git
+# push and updates reference(s) in its repository, and when the push
+# tries to update the branch that is currently checked out and the
+# receive.denyCurrentBranch configuration variable is set to
+# updateInstead.
+#
+# By default, such a push is refused if the working tree and the index
+# of the remote repository has any difference from the currently
+# checked out commit; when both the working tree and the index match
+# the current commit, they are updated to match the newly pushed tip
+# of the branch. This hook is to be used to override the default
+# behaviour; however the code below reimplements the default behaviour
+# as a starting point for convenient modification.
+#
+# The hook receives the commit with which the tip of the current
+# branch is going to be updated:
+commit=$1
+
+# It can exit with a non-zero status to refuse the push (when it does
+# so, it must not modify the index or the working tree).
+die () {
+	echo >&2 "$*"
+	exit 1
+}
+
+# Or it can make any necessary changes to the working tree and to the
+# index to bring them to the desired state when the tip of the current
+# branch is updated to the new commit, and exit with a zero status.
+#
+# For example, the hook can simply run git read-tree -u -m HEAD "$1"
+# in order to emulate git fetch that is run in the reverse direction
+# with git push, as the two-tree form of git read-tree -u -m is
+# essentially the same as git switch or git checkout that switches
+# branches while keeping the local changes in the working tree that do
+# not interfere with the difference between the branches.
+
+# The below is a more-or-less exact translation to shell of the C code
+# for the default behaviour for git's push-to-checkout hook defined in
+# the push_to_deploy() function in builtin/receive-pack.c.
+#
+# Note that the hook will be executed from the repository directory,
+# not from the working tree, so if you want to perform operations on
+# the working tree, you will have to adapt your code accordingly, e.g.
+# by adding "cd .." or using relative paths.
+
+if ! git update-index -q --ignore-submodules --refresh
+then
+	die "Up-to-date check failed"
+fi
+
+if ! git diff-files --quiet --ignore-submodules --
+then
+	die "Working directory has unstaged changes"
+fi
+
+# This is a rough translation of:
+```
+
+### 📄 `.git/hooks/sendemail-validate.sample`
+
+```
+#!/data/data/com.termux/files/usr/bin/sh
+
+# An example hook script to validate a patch (and/or patch series) before
+# sending it via email.
+#
+# The hook should exit with non-zero status after issuing an appropriate
+# message if it wants to prevent the email(s) from being sent.
+#
+# To enable this hook, rename this file to "sendemail-validate".
+#
+# By default, it will only check that the patch(es) can be applied on top of
+# the default upstream branch without conflicts in a secondary worktree. After
+# validation (successful or not) of the last patch of a series, the worktree
+# will be deleted.
+#
+# The following config variables can be set to change the default remote and
+# remote ref that are used to apply the patches against:
+#
+#   sendemail.validateRemote (default: origin)
+#   sendemail.validateRemoteRef (default: HEAD)
+#
+# Replace the TODO placeholders with appropriate checks according to your
+# needs.
+
+validate_cover_letter () {
+	file="$1"
+	# TODO: Replace with appropriate checks (e.g. spell checking).
+	true
+}
+
+validate_patch () {
+	file="$1"
+	# Ensure that the patch applies without conflicts.
+	git am -3 "$file" || return
+	# TODO: Replace with appropriate checks for this patch
+	# (e.g. checkpatch.pl).
+	true
+}
+
+validate_series () {
+	# TODO: Replace with appropriate checks for the whole series
+	# (e.g. quick build, coding style checks, etc.).
+	true
+}
+
+# main -------------------------------------------------------------------------
+
+if test "$GIT_SENDEMAIL_FILE_COUNTER" = 1
+then
+	remote=$(git config --default origin --get sendemail.validateRemote) &&
+	ref=$(git config --default HEAD --get sendemail.validateRemoteRef) &&
+	worktree=$(mktemp --tmpdir -d sendemail-validate.XXXXXXX) &&
+	git worktree add -fd --checkout "$worktree" "refs/remotes/$remote/$ref" &&
+	git config --replace-all sendemail.validateWorktree "$worktree"
+else
+	worktree=$(git config --get sendemail.validateWorktree)
+fi || {
+	echo "sendemail-validate: error: failed to prepare worktree" >&2
+	exit 1
+}
+```
+
+### 📄 `.git/hooks/update.sample`
+
+```
+#!/data/data/com.termux/files/usr/bin/sh
+#
+# An example hook script to block unannotated tags from entering.
+# Called by "git receive-pack" with arguments: refname sha1-old sha1-new
+#
+# To enable this hook, rename this file to "update".
+#
+# Config
+# ------
+# hooks.allowunannotated
+#   This boolean sets whether unannotated tags will be allowed into the
+#   repository.  By default they won't be.
+# hooks.allowdeletetag
+#   This boolean sets whether deleting tags will be allowed in the
+#   repository.  By default they won't be.
+# hooks.allowmodifytag
+#   This boolean sets whether a tag may be modified after creation. By default
+#   it won't be.
+# hooks.allowdeletebranch
+#   This boolean sets whether deleting branches will be allowed in the
+#   repository.  By default they won't be.
+# hooks.denycreatebranch
+#   This boolean sets whether remotely creating branches will be denied
+#   in the repository.  By default this is allowed.
+#
+
+# --- Command line
+refname="$1"
+oldrev="$2"
+newrev="$3"
+
+# --- Safety check
+if [ -z "$GIT_DIR" ]; then
+	echo "Don't run this script from the command line." >&2
+	echo " (if you want, you could supply GIT_DIR then run" >&2
+	echo "  $0 <ref> <oldrev> <newrev>)" >&2
+	exit 1
+fi
+
+if [ -z "$refname" -o -z "$oldrev" -o -z "$newrev" ]; then
+	echo "usage: $0 <ref> <oldrev> <newrev>" >&2
+	exit 1
+fi
+
+# --- Config
+allowunannotated=$(git config --type=bool hooks.allowunannotated)
+allowdeletebranch=$(git config --type=bool hooks.allowdeletebranch)
+denycreatebranch=$(git config --type=bool hooks.denycreatebranch)
+allowdeletetag=$(git config --type=bool hooks.allowdeletetag)
+allowmodifytag=$(git config --type=bool hooks.allowmodifytag)
+
+# check for no description
+projectdesc=$(sed -e '1q' "$GIT_DIR/description")
+case "$projectdesc" in
+"Unnamed repository"* | "")
+	echo "*** Project description file hasn't been set" >&2
+	exit 1
+	;;
+esac
+
+```
+
+### 📄 `.git/index`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/info/exclude`
+
+```
+# git ls-files --others --exclude-from=.git/info/exclude
+# Lines that start with '#' are comments.
+# For a project mostly in C, the following would be a good set of
+# exclude patterns (uncomment them if you want to use them):
+# *.[oa]
+# *~
+```
+
+### 📄 `.git/logs/HEAD`
+
+```
+0000000000000000000000000000000000000000 127d2bededfaec14a81870484b0118a0b9220396 jiggoo0 <jiggo0@outlook.co.th> 1766062554 +0700	clone: from https://github.com/jiggoo0/Namsommut.git
+127d2bededfaec14a81870484b0118a0b9220396 fb3e4fb233f34acaab6a7b2d5f39178114873e8f jiggoo0 <jiggo0@outlook.co.th> 1766062610 +0700	commit: first commit
+```
+
+### 📄 `.git/logs/refs/heads/main`
+
+```
+0000000000000000000000000000000000000000 127d2bededfaec14a81870484b0118a0b9220396 jiggoo0 <jiggo0@outlook.co.th> 1766062554 +0700	clone: from https://github.com/jiggoo0/Namsommut.git
+127d2bededfaec14a81870484b0118a0b9220396 fb3e4fb233f34acaab6a7b2d5f39178114873e8f jiggoo0 <jiggo0@outlook.co.th> 1766062610 +0700	commit: first commit
+```
+
+### 📄 `.git/logs/refs/remotes/origin/HEAD`
+
+```
+0000000000000000000000000000000000000000 127d2bededfaec14a81870484b0118a0b9220396 jiggoo0 <jiggo0@outlook.co.th> 1766062554 +0700	clone: from https://github.com/jiggoo0/Namsommut.git
+```
+
+### 📄 `.git/logs/refs/remotes/origin/main`
+
+```
+127d2bededfaec14a81870484b0118a0b9220396 fb3e4fb233f34acaab6a7b2d5f39178114873e8f jiggoo0 <jiggo0@outlook.co.th> 1766062616 +0700	update by push
+```
+
+### 📄 `.git/objects/03/a5f3fff74877f5e023dd3c5d2892b72eb9bea9`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/03/b07187c9e7cc9591e017bfac9fa750504e495a`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/04/773dd7921dff890087d534842d7042114af6bb`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/06/4a0e52fd737e32141b08880d206e71ab962325`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/09/57b6d198a5989bc995061c254cf3572701d89f`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/0a/25bc3ddc1d342628be78d891a02426bedc6666`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/0d/22def208b068bf8519273db243e8c19f62ea17`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/0f/bd6d695784d506bdeeb630b2405198d7480a0b`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/10/2fc31a5a8ef0a77953ee8b90693f3be8f7fad3`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/14/98cf44c17e5d903f6c885dd3bb5df2b0ecd5a9`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/17/8f0867b1c3d1ac7d49bb03647e626b581eda8f`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/23/5b349cc2127b27a737e56901b4a00dd4f8718e`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/25/b1b4b7d6ac4ffc9dc010ed8ab20c9ba01b58f7`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/2a/f4a5410121e5f2cb1403c01e38223b6b4568ee`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/33/95cfbec83379eadf92ef24603cdc668f2ab7cc`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/3a/9b32978c85ddcfb07e1adc9a8842e1c91bebec`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/3b/ca2b1d69f2232619a5928cf6560cf859a97d8f`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/43/6ff07f3fc4fcc668472b1dd4deb6c8a4b12398`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/53/102aecd89de41a78577f9ec80a89a25c2ca04d`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/5c/7b066556b60ac01a6835c36d034bcc2cbf7a92`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/5c/fc962f4763d2618fdb6cedc33b67b4448033b4`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/83/a8d033d8b81137e9acb87a629f3d0f3f42ad14`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/8b/723e29e88bde5b35ff6bc3ede49702798e24fd`
+
+```
+x}��n�@�Y�)f	��fA�H�d���I3U�l`הJ	�;��]*	Ԫ-T\o�$W}�L<���XQ��=���I84���>��{���gA���ξ����24/�`P���a��"�����͉��Q�<mWc��`�$Syj�\����**nk<s�$+�t��`nӅ2IT쥛DC�k�4�$)�������C�����^��S�+�4X*��L%=Ko�}���ZFߘ�Ͷ�(i��V3����Q(�:k̑V/}o�2Z���d!�ՙ�9v5Ɋr�������.T��㉾�c���u?R#�W�ڋ���:;��3&�*(�����*��a:`:���}�3͘��~0�b:��-�ӄK��\N��:�;�C.��'&�R�`3�e�6:?3}q��L߭u9E�Q��qv�t�q�@;8����D%Ӣ��U�M�>E�6F#�9,@dQ�;WP�e�l�������jc�"p���Y?ve	s�@
+8tcI����<�l��X�����K@@����@�qUͱ!��f@|��¥o;��z��C��g2|�76"k��%,�oB���qg�9 c�-4�w�4�6�$
+```
+
+### 📄 `.git/objects/8c/0fc25b6370d11cc9677e8a21edfb67498ccc92`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/92/fa5862ff0e260a6f6257a695f35ba9cbd5f6e8`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/93/07d9481604457ad52ac8a6a3be2544938e548a`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/97/807ebe48d98334e2df157b03f4639deab44f3e`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/a0/4fa3b408adceb1fe46e938aaa5e04cb41d9618`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/a2/3b9201d845d049f39552b8bbc01fcf388155ee`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/a4/42134f2075180059097661ff3a35607bc558dc`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/cc/ffae195a1bb894301822de0bad215ce50da0e2`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/d0/fa64d5c7d2349c2f5cb5b28beb13ebf7bca828`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/d9/4525a7750532f7579f6dc1c71a849be67e0f97`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/d9/8141214040a093bd20b7e9268fcabb10760e3a`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/da/419d0eec7fed874b27314b349cb6892611a063`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/e3/f7fd987f81b0ff1c4de7cdf444c3a8088777bc`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/e7/d4836588827dac0baaee5a8eeb9eaf80a2c5d2`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/f4/f8a67a29ad8e9815ec918f6f953c65542f2924`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/fb/3e4fb233f34acaab6a7b2d5f39178114873e8f`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/pack/pack-8e0dc71c972e0d79d7f869771ac2dbb618fcbc89.idx`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/pack/pack-8e0dc71c972e0d79d7f869771ac2dbb618fcbc89.pack`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/objects/pack/pack-8e0dc71c972e0d79d7f869771ac2dbb618fcbc89.rev`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `.git/packed-refs`
+
+```
+# pack-refs with: peeled fully-peeled sorted 
+127d2bededfaec14a81870484b0118a0b9220396 refs/remotes/origin/main
+```
+
+### 📄 `.git/refs/heads/main`
+
+```
+fb3e4fb233f34acaab6a7b2d5f39178114873e8f
+```
+
+### 📄 `.git/refs/remotes/origin/HEAD`
+
+```
+ref: refs/remotes/origin/main
+```
+
+### 📄 `.git/refs/remotes/origin/main`
+
+```
+fb3e4fb233f34acaab6a7b2d5f39178114873e8f
+```
 
 ### 📄 `.บันทึก.md`
 
@@ -99,125 +992,103 @@ READM.md
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 ACCESS DENIED | Namsommut Investigation</title>
-    
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="assets/css/theme.css">
-    
+
     <style>
-        .error-page {
+        body {
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: radial-gradient(circle at center, #1a1a1c 0%, #050505 100%);
+            background: radial-gradient(circle, #0a0a0c 0%, #050505 100%);
             overflow: hidden;
         }
-        .glitch {
-            font-size: 8rem;
-            font-weight: 900;
-            position: relative;
-            color: #fff;
-            text-shadow: 0.05em 0 0 #007bff, -0.025em -0.05em 0 #ff4d4d,
-                         0.025em 0.05em 0 #00d4ff;
-            animation: glitch 500ms infinite;
+        .error-code {
+            font-size: 10rem;
+            font-weight: 800;
+            line-height: 1;
+            color: rgba(255, 255, 255, 0.03);
+            position: absolute;
+            z-index: 0;
         }
-        @keyframes glitch {
-            0% { text-shadow: 0.05em 0 0 #007bff, -0.05em -0.025em 0 #ff4d4d; }
-            14% { text-shadow: 0.05em 0 0 #007bff, -0.05em -0.025em 0 #ff4d4d; }
-            15% { text-shadow: -0.05em -0.025em 0 #007bff, 0.025em 0.025em 0 #ff4d4d; }
-            49% { text-shadow: -0.05em -0.025em 0 #007bff, 0.025em 0.025em 0 #ff4d4d; }
-            50% { text-shadow: 0.025em 0.05em 0 #007bff, 0.05em 0 0 #ff4d4d; }
-            99% { text-shadow: 0.025em 0.05em 0 #007bff, 0.05em 0 0 #ff4d4d; }
-            100% { text-shadow: -0.025em 0 0 #007bff, -0.025em -0.025em 0 #ff4d4d; }
+        .terminal-box {
+            z-index: 1;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            box-shadow: 0 0 30px rgba(255, 0, 0, 0.1);
+        }
+        .glitch-text {
+            color: #ff4d4d;
+            text-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
         }
     </style>
 </head>
-<body class="bg-dark text-white">
+<body class="font-monospace">
 
-    <div class="error-page text-center p-4">
-        <div class="container">
-            <div class="glitch mb-4">404</div>
-            
-            <h2 class="fw-bold text-gradient-blue mb-3">ACCESS DENIED / FILE REMOVED</h2>
-            
-            <div class="font-monospace text-muted mb-5">
-                <p>พิกัดที่คุณพยายามเข้าถึงไม่มีอยู่ในฐานข้อมูล หรืออาจถูกลบเพื่อความปลอดภัย</p>
-                <div class="p-3 bg-white bg-opacity-5 rounded d-inline-block">
-                    <small id="error-log" class="text-danger"></small>
-                </div>
+    <div class="error-code">404</div>
+
+    <div class="terminal-box glass-card p-5 text-center">
+        <i class="bi bi-exclamation-triangle-fill display-1 glitch-text mb-4"></i>
+        
+        <h2 class="fw-bold text-white mb-3">ACCESS_DENIED</h2>
+        
+        <div class="text-muted small mb-4 lh-lg">
+            <p>ระบบตรวจพบการพยายามเข้าถึงไฟล์ที่ไม่มีอยู่จริง หรือคุณไม่มีสิทธิ์การเข้าถึงในเลเยอร์นี้ (Unauthorized Layer)</p>
+            <div class="p-2 bg-dark rounded border border-white border-opacity-5 text-start mt-3">
+                <code>> ERROR_CODE: 0x404_NOT_FOUND</code><br>
+                <code>> IP_LOGGED: TRACE_ACTIVE</code><br>
+                <code>> STATUS: REDIRECT_REQUIRED</code>
             </div>
+        </div>
 
-            <div class="d-flex justify-content-center gap-3">
-                <a href="index.html" class="btn btn-primary rounded-pill px-4 py-2">
 ```
 
-### 📄 `READM.md`
+### 📄 `README.md`
 
 ```markdown
-# 🕵️‍♂️ Namsommut Investigation - Website Project
+# 🕵️‍♂️ Namsommut Investigation System v1.1.0
 
-**บริษัท นักสืบ นามสมมุติ จำกัด** เป็นโปรเจกต์เว็บไซต์แนะนำบริการสืบสวนสอบสวนที่เน้นความปลอดภัย ความลึกลับ และความน่าเชื่อถือ โดยตัวเว็บถูกพัฒนาด้วยโครงสร้าง **Static Web Architecture** ที่ทันสมัย ใช้งานง่าย และรองรับการแสดงผลทุกอุปกรณ์
+ระบบเว็บไซต์หน่วยปฏิบัติการข้อมูลลับที่ถูกออกแบบด้วยโครงสร้าง **Modular Architecture** เน้นความปลอดภัย ความเร็ว และความง่ายในการจัดการข้อมูลผ่านไฟล์ JSON
+
+## 🛠 Tech Stack
+- **Frontend:** HTML5, CSS3 (Custom Glassmorphism), Bootstrap 5.3
+- **Logic:** Vanilla JavaScript (ES6+)
+- **Data Handling:** JSON-based Dynamic Rendering
+- **Animation:** Intersection Observer API
+
+## 📂 โครงสร้างโฟลเดอร์ที่สำคัญ
+- `/assets/js/config.js`: ศูนย์กลางการตั้งค่า Path ข้อมูล และ UI Delay
+- `/assets/js/render.js`: ตัวจัดการเรนเดอร์ข้อมูลจาก JSON ลงสู่หน้าเว็บ
+- `/assets/js/utils.js`: ระบบ Animation และจัดการ Scroll Behavior
+- `/data/`: ฐานข้อมูลภารกิจ (Services), รีวิว (Reviews), และทีมงาน (Team)
+- `/components/`: ส่วนประกอบเว็บที่ใช้ซ้ำ (Header, Footer, Hero)
+
+## 🚀 การเริ่มต้นใช้งาน
+1. **การติดตั้ง:** ไม่ต้องใช้ Node.js หรือ Compiler ใดๆ เพียงวางไฟล์บน Web Server (เช่น Apache, Nginx หรือ GitHub Pages)
+2. **การแก้ไขข้อมูล:** - หากต้องการเพิ่มบริการใหม่ ให้แก้ไขที่ `data/services.json`
+   - หากต้องการเปลี่ยนสโลแกนหรือการติดต่อหลัก ให้แก้ไขที่ `data/site.json`
+3. **การปรับแต่งสี:** แก้ไขตัวแปร CSS ใน `:root` ที่ไฟล์ `assets/css/main.css`
+
+## 🔒 Security Protocol (UI Logic)
+เว็บไซต์นี้มีการจำลองระบบรักษาความปลอดภัยในรูปแบบ Visual Effect:
+- **System Loader:** จำลองการเข้ารหัสข้อมูลก่อนเข้าสู่หน้าหลัก
+- **Data Encrypted Messages:** แสดงผลเมื่อการดึงไฟล์ JSON ขัดข้อง
+- **NDA Protection:** ระบบจัดการฟอร์มติดต่อที่เน้นการรักษาความลับ
+
+## 🛠 ฟังก์ชันพิเศษ (Intelligence Tools)
+- **Category Filtering:** สามารถกรองประเภทภารกิจได้แบบ Real-time ในหน้า `services.html`
+- **Dynamic Meta:** ดึงข้อมูล SEO จาก `site.json` มาแสดงผลโดยอัตโนมัติ
 
 ---
-
-## 🚀 จุดเด่นของโปรเจกต์ (Key Features)
-
-- **Modular Components:** แยกส่วน Navbar, Footer และ Hero ออกเป็นไฟล์อิสระ ง่ายต่อการแก้ไข
-- **Dynamic Content:** ดึงข้อมูลบริการ (Services) และรีวิว (Reviews) จากไฟล์ JSON ทำให้ไม่ต้องแก้โค้ด HTML บ่อยๆ
-- **Glassmorphism Design:** ดีไซน์ทันสมัยด้วยเอฟเฟกต์โปร่งแสงและโทนสี Midnight Black
-- **Secure Form Simulation:** ระบบฟอร์มติดต่อที่จำลองการเข้ารหัสข้อมูล (Encryption Simulation)
-- **Responsive Design:** รองรับการใช้งานสมบูรณ์แบบทั้งบน Desktop, Tablet และ Mobile
-
----
-
-## 📂 โครงสร้างโฟลเดอร์ (Project Structure)
-
-```text
-namsommut-project/
-├── index.html            # หน้าแรก (Hero & Service Summary)
-├── about.html            # ข้อมูลบริษัทและทีมงาน
-├── services.html         # รายละเอียดบริการทั้งหมด
-├── review.html           # เสียงตอบรับจากลูกค้า
-├── contact.html          # แบบฟอร์มติดต่อเคสลับ
-├── components/           # ส่วนประกอบเว็บที่ใช้ร่วมกัน
-│   ├── header.html       # Navbar & Navigation
-│   ├── footer.html       # Footer & Copyright
-│   └── hero.html         # Hero Section Component
-├── data/                 # ไฟล์ฐานข้อมูล JSON
-│   ├── site.json         # ข้อมูลพื้นฐานของบริษัท
-│   ├── services.json     # รายการบริการ
-│   └── reviews.json      # ข้อมูลรีวิวลูกค้า
-└── assets/               # ทรัพยากรเสริม
-    ├── css/              # main.css, theme.css, responsive.css
-    ├── js/               # app.js (Logic), render.js (UI)
-    └── img/              # รูปภาพประกอบ
-
-🛠 เทคโนโลยีที่ใช้ (Tech Stack)
- * Frontend: HTML5, CSS3 (Custom Variables)
- * Framework: Bootstrap 5.3
- * Icons: Bootstrap Icons
- * Fonts: Google Fonts (Sarabun)
- * Scripting: Vanilla JavaScript (ES6+) สำหรับจัดการ Fetch API และ DOM Manipulation
-💻 วิธีการติดตั้งและใช้งาน (Getting Started)
- * Clone หรือดาวน์โหลดโปรเจกต์ ลงในเครื่องคอมพิวเตอร์ของคุณ
- * การเปิดใช้งาน: > ⚠️ สำคัญ: เนื่องจากมีการใช้ Fetch API เพื่อดึงข้อมูลไฟล์ JSON และ Components คุณ ไม่สามารถ เปิดไฟล์ได้ด้วยการดับเบิลคลิก index.html โดยตรง
- * ใช้ Local Server:
-   * สำหรับ VS Code: แนะนำให้ติดตั้ง Extension "Live Server" จากนั้นคลิกขวาที่ index.html แล้วเลือก Open with Live Server
-   * หรือใช้คำสั่งผ่าน Terminal (ถ้ามี Python): python -m http.server 8000
-📝 การแก้ไขข้อมูล (Customization)
- * แก้ไขชื่อบริษัท/สโลแกน: เข้าไปที่ไฟล์ data/site.json
- * เพิ่ม/ลด บริการ: แก้ไขรายการในไฟล์ data/services.json
- * จัดการรีวิว: เพิ่มข้อมูลในไฟล์ data/reviews.json
-🔒 จรรยาบรรณและความปลอดภัย (Security Note)
-เว็บไซต์นี้ถูกออกแบบมาเพื่อจุดประสงค์ในการนำเสนอผลงาน (Portfolio/Demo) ข้อมูลที่กรอกผ่านหน้า contact.html จะถูกบันทึกไว้ใน Console ของเบราว์เซอร์เท่านั้น ไม่มีการส่งไปยังเซิร์ฟเวอร์จริงในเวอร์ชันเริ่มต้นนี้
-👤 ผู้พัฒนา
- * ชื่อทีม/บริษัท: บริษัท นักสืบ นามสมมุติ จำกัด
- * สโลแกน: "ความจริงไม่มีนามสมมุติ"
-```
+**Status:** `READY_FOR_DEPLOYMENT`
+**Author:** Namsommut Investigation Team
+**Protocol:** Secure Uplink Active
+# Namsommut```
 
 ### 📄 `about.html`
 
@@ -227,12 +1098,12 @@ namsommut-project/
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เกี่ยวกับเรา | Namsommut Investigation</title>
-    
+    <title>Agency Profile | Namsommut Investigation</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/theme.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
@@ -241,39 +1112,37 @@ namsommut-project/
 
     <div id="header-placeholder"></div>
 
-    <main style="margin-top: 100px;">
-        
-        <section class="section-padding overflow-hidden">
+    <main style="padding-top: 100px;">
+        <section class="section-padding">
             <div class="container">
                 <div class="row align-items-center g-5">
                     <div class="col-lg-6 animate-on-scroll">
-                        <div class="badge-status mb-3">Intelligence Agency Profile</div>
-                        <h1 class="display-3 fw-bold text-gradient-blue mb-4">เราคือใคร?</h1>
-                        <p class="lead text-silver mb-4">
-                            "นามสมมุติ" ไม่ใช่แค่บริษัทนักสืบ แต่เราคือ **เครือข่ายปฏิบัติการข่าวกรองอิสระ** ที่ก่อตั้งโดยกลุ่มอดีตผู้เชี่ยวชาญด้านความมั่นคงและเทคโนโลยีสารสนเทศ
+                        <h6 class="text-primary font-monospace tracking-widest text-uppercase mb-3">Operational Background</h6>
+                        <h1 class="display-4 fw-bold mb-4">หน่วยปฏิบัติการ <br><span class="text-gradient-blue">นอกสารบบ</span></h1>
+                        <p class="text-silver mb-4 lh-lg">
+                            Namsommut Investigation ก่อตั้งขึ้นจากการรวมตัวของอดีตเจ้าหน้าที่ด้านความมั่นคงและผู้เชี่ยวชาญด้านไซเบอร์ เพื่อให้บริการรวบรวมพยานหลักฐานที่ระบบปกติไม่สามารถเข้าถึงได้ เรายึดถือความถูกต้องของข้อมูลและความลับของลูกค้าเป็นกฎเหล็กสูงสุด
                         </p>
-                        <p class="text-muted lh-lg mb-5">
-                            เราเล็งเห็นว่าในโลกปัจจุบัน ความจริงมักถูกซ่อนไว้ภายใต้เลเยอร์ของข้อมูลดิจิทัลและสายสัมพันธ์ที่ซับซ้อน ภารกิจของเราคือการ "ลอกคราบ" สิ่งเหล่านั้น เพื่อมอบความจริงที่จับต้องได้และเป็นประโยชน์สูงสุดต่อการตัดสินใจของคุณ
-                        </p>
-                        <div class="row g-4">
-                            <div class="col-6">
-                                <h3 class="fw-bold text-primary mb-0">15+</h3>
-                                <small class="text-uppercase tracking-widest text-muted">Years Experience</small>
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <div class="p-3 border border-white border-opacity-10 rounded-3">
+                                    <h5 class="text-primary fw-bold mb-1">100%</h5>
+                                    <small class="text-muted">Anonymous Protocol</small>
+                                </div>
                             </div>
-                            <div class="col-6">
-                                <h3 class="fw-bold text-primary mb-0">1,200+</h3>
-                                <small class="text-uppercase tracking-widest text-muted">Cases Solved</small>
+                            <div class="col-sm-6">
+                                <div class="p-3 border border-white border-opacity-10 rounded-3">
+                                    <h5 class="text-primary fw-bold mb-1">24/7</h5>
+                                    <small class="text-muted">Active Monitoring</small>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6 position-relative animate-on-scroll">
-                        <div class="image-stack position-relative p-5">
-                            <img src="assets/img/about-main.jpg" alt="Investigation Team" class="img-fluid rounded-4 grayscale shadow-lg" style="border: 1px solid rgba(0,123,255,0.2);">
-                            <div class="glass-card p-3 position-absolute bottom-0 start-0 mb-n3 ms-n3 shadow-lg" style="max-width: 250px;">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-shield-fill-check text-success fs-3 me-3"></i>
-                                    <small class="text-white-50">Verified Operator: Active Level 5 Clearance</small>
-                                </div>
+                    <div class="col-lg-6 animate-on-scroll">
+                        <div class="position-relative">
+                            <img src="assets/img/banner.jpg" alt="Agency Image" class="img-fluid rounded-4 grayscale shadow-lg">
+                            <div class="position-absolute bottom-0 start-0 m-4 p-4 glass-card border-primary border-opacity-25">
+                                <h6 class="mb-0 fw-bold">ESTABLISHED 2018</h6>
+                                <small class="text-muted font-monospace x-small">CODE: ALPHA-ORIGIN</small>
                             </div>
                         </div>
                     </div>
@@ -281,205 +1150,211 @@ namsommut-project/
             </div>
         </section>
 
-        <section class="section-padding bg-dark-section">
+        <section class="section-padding bg-dark-section border-top border-white border-opacity-5">
+            <div class="container">
+                <div class="text-center mb-5 animate-on-scroll">
 ```
 
 ### 📄 `assets/css/main.css`
 
 ```css
 /**
- * Namsommut Investigation - Main Style Engine
- * 🛡️ Theme: Elite Dark / Cyber Noir
- * 🟢 Version: 2.0.1
+ * Namsommut Investigation - Main Stylesheet
+ * 🛠️ Function: Core Layout, Typography, and Global Styling
+ * 🟢 Status: Production Ready (Compatible with Utils.js & Render.js)
  */
 
-/* 1. Root Variables & Reset */
 :root {
-    --primary-color: #007bff;
-    --primary-glow: rgba(0, 123, 255, 0.5);
     --bg-dark: #050505;
-    --bg-section: #0a0a0b;
-    --card-bg: #111112;
-    --text-main: #e0e0e0;
-    --text-muted: #888888;
-    --border-color: rgba(255, 255, 255, 0.08);
-    --transition-smooth: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    --bg-card: #0a0a0c;
+    --primary-blue: #007bff;
+    --primary-glow: rgba(0, 123, 255, 0.4);
+    --text-silver: #a0a0a0;
+    --text-muted: rgba(255, 255, 255, 0.5);
+    --transition-smooth: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    --glass-border: rgba(255, 255, 255, 0.08);
 }
 
+/* 1. Global Reset & Base */
 body {
     background-color: var(--bg-dark);
-    color: var(--text-main);
+    color: #ffffff;
     font-family: 'Sarabun', sans-serif;
-    line-height: 1.6;
     overflow-x: hidden;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
 }
 
-/* 2. Global Utilities */
-.tracking-widest { letter-spacing: 0.2em; }
-.tracking-tighter { letter-spacing: -1px; }
-
-.text-gradient-primary {
-    background: linear-gradient(90deg, #007bff, #00d4ff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.font-monospace {
+    font-family: 'JetBrains Mono', monospace !important;
 }
 
-/* 3. Layout Components */
-.bg-dark-section {
-    background-color: var(--bg-section);
-}
-
-.backdrop-blur {
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-}
-
-/* 4. Service & Team Cards */
-.bg-card-custom {
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
+/* 2. Scroll Animation Classes (Working with Utils.js) */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
     transition: var(--transition-smooth);
-    position: relative;
-    overflow: hidden;
+    will-change: opacity, transform;
 }
 
-.shadow-hover:hover {
-    transform: translateY(-10px);
-    border-color: var(--primary-color) !important;
-    box-shadow: 0 15px 40px rgba(0, 123, 255, 0.15) !important;
+/* Class ที่ Utils.js จะแอดให้เมื่อ Scroll มาถึง */
+.animate-on-scroll.appear {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 3. Reusable Components & Glassmorphism */
+.section-padding {
+    padding: 100px 0;
+}
+
+.glass-card {
+    background: rgba(15, 15, 18, 0.6);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    transition: var(--transition-smooth);
+}
+
+.glass-card:hover {
 ```
 
 ### 📄 `assets/css/responsive.css`
 
 ```css
 /**
- * Namsommut Investigation - Responsive Adaptive Engine
- * 📱 Optimizing for Mobile, Tablet, and Desktop
- * 🛡️ Status: Fully Responsive
+ * Namsommut Investigation - Responsive Overrides
+ * 🛠️ Function: Mobile & Tablet Optimization
+ * 🟢 Status: Production Ready
  */
 
-/* 1. Large Devices (Desktops) */
-@media (min-width: 1200px) {
-    .container {
-        max-width: 1140px;
-    }
+/* 1. Large Devices (Laptops/Desktops) */
+@media (max-width: 1199.98px) {
+    .section-padding { padding: 80px 0; }
 }
 
 /* 2. Medium Devices (Tablets) */
 @media (max-width: 991.98px) {
-    /* ปรับ Navbar ให้เป็นแบบ Full Screen Menu เมื่อกดขยาย */
-    .navbar-collapse {
-        background: rgba(10, 10, 11, 0.98);
-        backdrop-filter: blur(20px);
-        margin-top: 15px;
-        padding: 20px;
-        border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .nav-link-custom {
-        padding: 12px 0;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    /* Hero Section ปรับขนาดตัวอักษรให้พอดีจอ */
-    .display-2 {
-        font-size: 3rem;
-    }
+    .section-padding { padding: 60px 0; }
     
-    .hero-section {
-        padding-top: 120px;
-        text-align: center;
+    #main-nav {
+        background: rgba(5, 5, 5, 0.95) !important;
+        backdrop-filter: blur(10px);
+        padding: 1rem 0;
+    }
+
+    .navbar-collapse {
+        margin-top: 1rem;
+        padding: 1.5rem;
+        background: var(--bg-card);
+        border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .nav-link {
+        padding: 12px 0 !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .hero-title { font-size: 2.5rem !important; }
+}
+
+/* 3. Small Devices (Phones) */
+@media (max-width: 575.98px) {
+    .section-padding { padding: 50px 0; }
+    
+    .display-4 { font-size: 2.2rem !important; }
+    .display-5 { font-size: 1.8rem !important; }
+    
+    .container { padding-left: 20px; padding-right: 20px; }
+    
+    /* ปรับแต่งปุ่มใน Mobile ให้กดง่ายขึ้น */
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    /* ปรับระยะห่างของ Card ใน Mobile */
+    .col-md-6, .col-lg-4 {
+        margin-bottom: 1.5rem !important;
     }
 }
 
-/* 3. Small Devices (Mobile Phones) */
-@media (max-width: 767.98px) {
-    /* ปรับระยะห่างและขนาดตัวอักษรหลัก */
-    .display-2 {
-        font-size: 2.2rem;
-        line-height: 1.2;
-    }
-
-    .lead {
-        font-size: 1rem;
-    }
-
-    /* ปรับปุ่มให้เป็นแบบ Stack (ซ้อนกัน) เพื่อให้กดง่ายด้วยนิ้วโป้ง */
-    .d-sm-flex {
-        flex-direction: column;
-        gap: 15px !important;
-    }
-
-    .btn-lg {
+/* 4. ปรับแต่งเอฟเฟกต์เฉพาะสำหรับ Touch Screens */
+@media (hover: none) {
 ```
 
 ### 📄 `assets/css/theme.css`
 
 ```css
 /**
- * Namsommut Investigation - Theme & Aesthetic Variables
- * 🎨 Style: Noir Intelligence / Neon Accents
- * 🟢 Status: System Calibrated
+ * Namsommut Investigation - Theme & UI Components
+ * 🛠️ Function: Specific Component Styling and Glow Effects
+ * 🟢 Status: Production Ready
  */
 
-/* 1. Theme Configuration */
-:root {
-    /* Main Palettes */
-    --primary-electric: #007bff;
-    --primary-dark: #0056b3;
-    --accent-cyan: #00d4ff;
-    --danger-red: #ff4d4d;
-    
-    /* Neutral Shades */
-    --dark-obsidian: #050505;
-    --dark-charcoal: #0a0a0b;
-    --dark-slate: #161618;
-    
-    /* Text Colors */
-    --text-pure: #ffffff;
-    --text-silver: #c0c0c0;
-    --text-dim: rgba(255, 255, 255, 0.5);
-    
-    /* Effects */
-    --glass-bg: rgba(10, 10, 11, 0.85);
-    --border-glass: rgba(255, 255, 255, 0.08);
+/* 1. Navbar Customization */
+#main-nav {
+    padding: 1.5rem 0;
+    transition: all 0.4s ease;
+    border-bottom: 1px solid transparent;
 }
 
-/* 2. Global Section Styling */
-.section-padding {
-    padding: 80px 0;
+#main-nav.scrolled {
+    padding: 0.8rem 0;
+    background: rgba(5, 5, 5, 0.85) !important;
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(0, 123, 255, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-.bg-dark-obsidian { background-color: var(--dark-obsidian); }
-.bg-dark-charcoal { background-color: var(--dark-charcoal); }
-
-/* 3. Typography & Gradients */
-h1, h2, h3, h4, h5, h6 {
-    color: var(--text-pure);
-    letter-spacing: 0.5px;
+.nav-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    color: rgba(255, 255, 255, 0.7) !important;
+    transition: all 0.3s ease;
 }
 
-.text-cyan { color: var(--accent-cyan); }
-.text-silver { color: var(--text-silver); }
-
-.text-gradient-blue {
-    background: linear-gradient(90deg, var(--primary-electric), var(--accent-cyan));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+.nav-link:hover, .nav-link.active {
+    color: var(--primary-blue) !important;
+    text-shadow: 0 0 8px var(--primary-glow);
 }
 
-/* 4. Specialized Components */
+/* 2. Custom Buttons */
+.btn-primary {
+    background-color: var(--primary-blue);
+    border: none;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    transition: all 0.3s ease;
+}
 
-/* Glassmorphism Card */
-.glass-card {
-    background: var(--dark-slate);
-    border: 1px solid var(--border-glass);
-    backdrop-filter: blur(10px);
-    border-radius: 20px;
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px var(--primary-glow);
+    background-color: #0069d9;
+}
+
+.btn-outline-primary {
+    border-color: rgba(0, 123, 255, 0.5);
+    color: var(--primary-blue);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 15px var(--primary-glow);
+}
+
+/* 3. Special Cards & Badges */
 ```
 
 ### 📄 `assets/img/banner.jpg`
+
+_[binary file – ไม่แสดงเนื้อหา]_
+
+### 📄 `assets/img/favicon.ico`
 
 _[binary file – ไม่แสดงเนื้อหา]_
 
@@ -503,65 +1378,143 @@ _[binary file – ไม่แสดงเนื้อหา]_
 
 ```javascript
 /**
- * Namsommut Investigation - Core Engine
- * 🟢 Status: Operational
- * 🛡️ Security: AES-256 Encrypted Interface
+ * Namsommut Investigation - Core Controller
+ */
+const App = {
+    async init() {
+        // 1. โหลด Component พื้นฐาน
+        await Promise.all([
+            this.loadComponent('header-placeholder', 'components/header.html'),
+            this.loadComponent('footer-placeholder', 'components/footer.html'),
+            this.loadComponent('hero-placeholder', 'components/hero.html')
+        ]);
+
+        // 2. แจ้ง Render.js ให้เริ่มทำงาน
+        window.dispatchEvent(new CustomEvent('uiReady'));
+        
+        // 3. ตั้งค่า Active Menu
+        this.setActiveMenu();
+    },
+
+    async loadComponent(id, path) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        try {
+            const res = await fetch(path);
+            if (res.ok) el.innerHTML = await res.text();
+        } catch (e) { console.error(`Error loading ${path}`); }
+    },
+
+    setActiveMenu() {
+        const path = window.location.pathname.split("/").pop() || 'index.html';
+        document.querySelectorAll('.nav-link').forEach(link => {
+            if (link.getAttribute('href') === path) link.classList.add('active');
+        });
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => App.init());
+```
+
+### 📄 `assets/js/config.js`
+
+```javascript
+/**
+ * Namsommut Investigation - System Configuration
+ * 🛠️ Function: Global settings for JS components
+ * 🟢 Status: Production Ready (Final Version)
  */
 
-document.addEventListener('DOMContentLoaded', async () => {
-    // 1. Initialize Components (โหลดส่วนประกอบหลัก)
-    await initApp();
+const CONFIG = {
+    // 🏢 ข้อมูลหน่วยงาน (Agency Information)
+    AGENCY_NAME: "Namsommut Investigation",
+    VERSION: "1.1.0",
+    DEBUG_MODE: false,
 
-    // 2. Technical Effects (เริ่มเอฟเฟกต์หลังโหลดเสร็จ)
-    typewriterEffect();
-    securityScannerSim();
+    // 📂 การจัดการเส้นทางข้อมูล (Data & Path Management)
+    // ตรวจสอบให้แน่ใจว่าโฟลเดอร์ data อยู่ในระดับเดียวกับ index.html
+    DATA_PATH: {
+        SITE: "data/site.json",
+        SERVICES: "data/services.json",
+        REVIEWS: "data/reviews.json",
+        TEAM: "data/team.json"
+    },
+
+    // 🖥️ การตั้งค่า UI และการโต้ตอบ (UI & Interaction Settings)
+    UI_SETTINGS: {
+        RENDER_WAIT: 500,          // หน่วงเวลาให้ Components (Header/Footer) โหลดเสร็จก่อนใส่ข้อมูล (ms)
+        LOADER_DELAY: 1800,        // ระยะเวลาแสดงหน้า System Loader (ms)
+        SCROLL_REVEAL_DELAY: 200, // ความหน่วงก่อน Animation เริ่มเล่น
+        STICKY_HEADER_OFFSET: 80  // ระยะการ Scroll ที่ Navbar จะเปลี่ยนเป็นแบบโปร่งแสง (Glassmorphism)
+    },
+
+    // 🛡️ ความปลอดภัยและโปรโตคอล (Security & Protocol)
+    // ใช้สำหรับการจำลองหน้าจอ Terminal และการแสดงผล UI เพื่อความน่าเชื่อถือ
+    SECURITY: {
+        ENCRYPTION_TYPE: "AES-256-GCM",
+        PROTOCOL_STATUS: "ACTIVE_SECURE",
+        ACCESS_LEVEL: "AUTHORIZED_ONLY",
+        FIREWALL: "DEEP-SHIELD V.1.1"
+    },
+
+    // 💬 ข้อความแจ้งเตือนจากระบบ (System Messages)
+    MESSAGES: {
+        SUBMIT_SUCCESS: "DATA_SENT: ภารกิจถูกส่งเข้าสู่ระบบแล้ว เจ้าหน้าที่จะติดต่อกลับผ่านช่องทางลับโดยเร็วที่สุด",
+        SUBMIT_ERROR: "SYSTEM_FAILURE: ไม่สามารถส่งข้อมูลได้ โปรดติดต่อศูนย์บัญชาการทาง LINE โดยตรง",
+        DB_FETCH_ERROR: "ACCESS_DENIED: การเข้าถึงฐานข้อมูลถูกปฏิเสธ โปรดตรวจสอบการเชื่อมต่อ Uplink"
+    }
+};
+
+// ล็อกค่า CONFIG ไม่ให้ถูกเปลี่ยนแปลงระหว่างการรัน (Security Best Practice)
+Object.freeze(CONFIG);
+
+console.log(`%c🕵️‍♂️ ${CONFIG.AGENCY_NAME} Config Loaded | Version ${CONFIG.VERSION}`, "color: #007bff; font-weight: bold;");
+```
+
+### 📄 `assets/js/contact-handler.js`
+
+```javascript
+/**
+ * Namsommut Investigation - Contact Form Handler
+ * 🛠️ Function: Form Validation & Submission Simulation
+ * 🟢 Status: Production Ready
+ */
+
+document.addEventListener('DOMContentLoaded', () => {
+    const contactForm = document.getElementById('mission-form');
     
-    // 3. Initialize Protection
-    if (window.Utils) {
-        window.Utils.preventBruteForce();
+    if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // 1. ดึงข้อมูลจากฟอร์ม
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            
+            // 2. จำลองสถานะการกำลังส่งข้อมูล (Loading State)
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>ENCRYPTING_DATA...`;
+
+            try {
+                // จำลองการหน่วงเวลาเพื่อความสมจริง (2 วินาที)
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                // 3. แสดงผลลัพธ์ความสำเร็จ (ในที่นี้ใช้ SweetAlert2 หรือ Alert ปกติ)
+                alert("SUCCESS: ภารกิจของคุณถูกส่งเข้าสู่ระบบจัดเก็บข้อมูลลับแล้ว เจ้าหน้าที่ติดต่อกลับภายใน 24 ชม.");
+                
+                // ล้างค่าในฟอร์ม
+                contactForm.reset();
+                
+            } catch (error) {
+                alert("ERROR: ระบบสื่อสารขัดข้อง โปรดติดต่อผ่านช่องทาง LINE โดยตรง");
+            } finally {
+                // คืนค่าปุ่ม
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+            }
+        });
     }
 });
-
-/**
- * โหลดส่วนประกอบพื้นฐานของเว็บไซต์ผ่าน Utils.js
- */
-async function initApp() {
-    console.log("🔒 Namsommut Core: Initializing Security Protocol...");
-    
-    // รายชื่อส่วนประกอบและ Placeholder ID
-    const components = [
-        { id: 'navbar-placeholder', url: 'components/navbar.html' },
-        { id: 'hero-placeholder', url: 'components/hero.html' },
-        { id: 'header-placeholder', url: 'components/header.html' },
-        { id: 'footer-placeholder', url: 'components/footer.html' }
-    ];
-
-    // ใช้ฟังก์ชันจาก Utils เพื่อโหลด Component แบบมีประสิทธิภาพ
-    for (const comp of components) {
-        if (window.Utils && window.Utils.loadComponent) {
-            await window.Utils.loadComponent(comp.id, comp.url);
-        } else {
-            // Fallback กรณี Utils.js ยังไม่ทำงาน
-            const element = document.getElementById(comp.id);
-            if (element) {
-                try {
-                    const response = await fetch(comp.url);
-                    const html = await response.text();
-                    element.innerHTML = html;
-                } catch (e) {
-                    console.error(`Error loading ${comp.url}`, e);
-                }
-            }
-        }
-    }
-    console.log("✅ Namsommut Core: All Modules Loaded.");
-}
-
-/**
- * เอฟเฟกต์พิมพ์ดีด (Typewriter) สำหรับสโลแกนหน้าแรก
- * วิธีใช้: ใส่ class="typewriter-text" และ data-text="ข้อความ" ใน HTML
- */
-function typewriterEffect() {
 ```
 
 ### 📄 `assets/js/render.js`
@@ -569,389 +1522,393 @@ function typewriterEffect() {
 ```javascript
 /**
  * Namsommut Investigation - Data Renderer
- * 🛠️ Function: Fetching and Rendering Secure Data
  */
-
 document.addEventListener('DOMContentLoaded', () => {
-    // เริ่มต้นการเรนเดอร์ข้อมูลเมื่อ Component โหลดเสร็จ
+    // รอให้ app.js โหลด Header/Footer เสร็จก่อน หรือรอสัญญาณจาก App
     setTimeout(() => {
         renderServices();
         renderReviews();
-        renderTeam();
-    }, 500); // รอให้ Placeholder โหลดเสร็จเล็กน้อย
+    }, CONFIG.UI_SETTINGS.RENDER_WAIT);
 });
 
-/**
- * 1. เรนเดอร์รายการบริการ (Services)
- * แสดงผลเป็น Card ที่มีดีไซน์ "Elite Operations"
- */
 async function renderServices() {
-    const serviceContainer = document.getElementById('service-list');
-    if (!serviceContainer) return;
+    const container = document.getElementById('service-list');
+    if (!container) return;
 
     try {
-        const response = await fetch('data/services.json');
+        const response = await fetch(CONFIG.DATA_PATH.SERVICES);
+        if (!response.ok) throw new Error('Fetch failed');
         const services = await response.json();
 
-        serviceContainer.innerHTML = services.map(service => `
+        container.innerHTML = services.map(service => `
             <div class="col-md-6 col-lg-4 mb-4 animate-on-scroll">
                 <div class="card bg-card-custom h-100 border-0 shadow-hover p-4 rounded-4 position-relative overflow-hidden">
-                    <div class="corner-light"></div>
-                    
                     <div class="card-body p-0">
                         <div class="d-flex align-items-center mb-3">
-                            <i class="bi ${service.icon} text-primary fs-2 me-3"></i>
+                            <div class="icon-box bg-primary bg-opacity-10 p-3 rounded-3 me-3">
+                                <i class="bi ${service.icon} text-primary fs-3"></i>
+                            </div>
                             <div>
                                 <h5 class="fw-bold mb-0 text-white">${service.title}</h5>
-                                <small class="text-primary text-uppercase tracking-wider" style="font-size: 0.7rem;">${service.subtitle}</small>
+                                <small class="text-primary text-uppercase tracking-widest font-monospace" style="font-size: 0.65rem;">${service.subtitle}</small>
                             </div>
                         </div>
                         <p class="text-muted small mb-4">${service.description}</p>
                         <ul class="list-unstyled mb-4">
                             ${service.features.map(f => `
                                 <li class="text-white-50 small mb-2">
-                                    <i class="bi bi-check2-circle text-primary me-2"></i>${f}
+                                    <i class="bi bi-shield-check text-primary me-2"></i>${f}
                                 </li>
                             `).join('')}
                         </ul>
                     </div>
-                    
-                    <div class="card-footer bg-transparent border-0 p-0 mt-auto">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 py-2 px-3">
-                                ${service.price_range || 'ประเมินตามความยาก'}
+                    <div class="card-footer bg-transparent border-0 p-0 mt-auto pt-3 border-top border-white border-opacity-5">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 py-2 px-3 font-monospace x-small">
+                                ${service.price_range}
                             </span>
+                            <a href="contact.html?service=${service.id}" class="btn btn-link text-primary p-0 text-decoration-none x-small font-monospace">
+                                INITIATE_MISSION <i class="bi bi-chevron-right"></i>
+                            </a>
                         </div>
-                        <a href="https://line.me/ti/p/PCE92r2xrB" class="btn btn-outline-primary btn-sm w-100 rounded-pill">
-                            <i class="bi bi-shield-lock me-2"></i> จองคิวสืบสวน
-                        </a>
                     </div>
                 </div>
+            </div>
+        `).join('');
+
+        // ตรวจสอบระบบ Animation
+        if (window.Utils && typeof window.Utils.initObserver === 'function') {
+            window.Utils.initObserver();
+        }
 ```
 
 ### 📄 `assets/js/utils.js`
 
 ```javascript
 /**
- * Namsommut Investigation - Utility Tools
- * 🛠️ Helpers for Component Loading & Security Mockups
+ * Namsommut Investigation - Utility Functions
+ * 🛠️ Function: Animations, Observers, and UI Helpers
+ * 🟢 Status: Production Ready (Formatted for PROJECT_SUMMARY)
  */
 
 const Utils = {
     /**
-     * 1. ฟังก์ชันโหลดไฟล์ HTML เข้ามาแสดงใน Placeholder
-     * @param {string} elementId - ID ของตัวรับในหน้า HTML
-     * @param {string} url - Path ของไฟล์ Component
+     * 1. ระบบตรวจจับ Element เพื่อเริ่มเล่น Animation (Scroll Reveal)
+     * ทำงานร่วมกับ Class .animate-on-scroll ใน HTML
      */
-    loadComponent: async (elementId, url) => {
-        const container = document.getElementById(elementId);
-        if (!container) return;
+    initObserver: function() {
+        const options = {
+            root: null,
+            threshold: 0.15, // เริ่มเล่นเมื่อ Element โผล่มา 15%
+            rootMargin: "0px 0px -50px 0px"
+        };
 
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            const html = await response.text();
-            container.innerHTML = html;
-            
-            // Dispatch event เพื่อบอกว่า Component โหลดเสร็จแล้ว
-            window.dispatchEvent(new CustomEvent('componentLoaded', { detail: elementId }));
-        } catch (error) {
-            console.error(`🔒 Security Alert: Failed to fetch secure module [${url}]`, error);
-            container.innerHTML = `<div class="text-danger small p-3">Access Denied: Resource Encrypted</div>`;
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // เพิ่ม Class 'appear' เพื่อเริ่มรัน CSS Animation
+                    entry.target.classList.add('appear');
+                    // เลิกตรวจจับหลังจากแสดงผลแล้วเพื่อประหยัด RAM
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, options);
+
+        // ตรวจจับทุก Element ที่ต้องการ Animation
+        const targets = document.querySelectorAll('.animate-on-scroll');
+        targets.forEach(target => observer.observe(target));
+        
+        console.log(`✅ [System]: Observer initialized on ${targets.length} nodes.`);
+    },
+
+    /**
+     * 2. ระบบจัดการ Navbar เมื่อมีการ Scroll (Sticky & Glass Effect)
+     */
+    handleScroll: function() {
+        const navbar = document.querySelector('.navbar');
+        if (!navbar) return;
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > CONFIG.UI_SETTINGS.STICKY_HEADER_OFFSET) {
+                navbar.classList.add('navbar-scrolled', 'glass-card-sm');
+            } else {
+                navbar.classList.remove('navbar-scrolled', 'glass-card-sm');
+            }
+        });
+    },
+
+    /**
+     * 3. ระบบ Smooth Scroll สำหรับ Anchor Links
+     */
+    initSmoothScroll: function() {
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+```
+
+### 📄 `cases.html`
+
+```html
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Archives | Namsommut Investigation</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+
+    <style>
+        :root {
+            --terminal-green: #00ff41;
+            --terminal-bg: #050505;
         }
-    },
 
-    /**
-     * 2. ฟังก์ชันจัดรูปแบบตัวเลขราคา (Currency Formatter)
-     * @param {number} amount - จำนวนเงิน
-     */
-    formatCurrency: (amount) => {
-        return new Intl.NumberFormat('th-TH', {
-            style: 'currency',
-            currency: 'THB',
-            minimumFractionDigits: 0
-        }).format(amount);
-    },
+        body {
+            background-color: var(--terminal-bg);
+            background-image: radial-gradient(circle at center, #111 0%, #050505 100%);
+        }
 
-    /**
-     * 3. ฟังก์ชันสุ่ม "สถานะเซิร์ฟเวอร์" (Mock Security Log)
-     * เพื่อใช้แสดงใน Header หรือ Status Bar
-     */
-    getSecurityStatus: () => {
-        const nodes = ["Bangkok-Mainframe", "Cloud-Proxy-SGP", "Deep-Data-Link"];
-        const status = ["ENCRYPTED", "OPERATIONAL", "HIDDEN"];
-        
-        const randomNode = nodes[Math.floor(Math.random() * nodes.length)];
-        const randomStatus = status[Math.floor(Math.random() * status.length)];
-        
-        return `[${randomNode}] STATUS: ${randomStatus}`;
-    },
+        .case-dashboard {
+            border: 1px solid rgba(0, 123, 255, 0.2);
+            border-radius: 12px;
+            background: rgba(10, 10, 12, 0.8);
+            backdrop-filter: blur(15px);
+            overflow: hidden;
+        }
 
-    /**
-     * 4. ระบบป้องกันการคัดลอกเบื้องต้น (Basic Protection)
-     * สื่อถึงความซีเรียสเรื่องความลับ
-     */
-    preventBruteForce: () => {
+        .terminal-header {
+            background: rgba(0, 123, 255, 0.1);
+            padding: 15px 25px;
+            border-bottom: 1px solid rgba(0, 123, 255, 0.2);
+        }
+
+        .status-dot {
+            height: 8px;
+            width: 8px;
+            background-color: var(--terminal-green);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            box-shadow: 0 0 8px var(--terminal-green);
+        }
+
+        /* ตารางสไตล์ Terminal */
+        .table-terminal {
+            color: #ddd;
+            margin-bottom: 0;
+        }
+
+        .table-terminal thead th {
+            color: #007bff;
+            text-transform: uppercase;
+```
+
+### 📄 `components/cta.html`
+
+```html
+<section class="section-padding position-relative overflow-hidden">
+    <div class="position-absolute top-0 start-0 w-100 h-100 opacity-10" 
+         style="background-image: linear-gradient(var(--primary-blue) 1px, transparent 1px), linear-gradient(90deg, var(--primary-blue) 1px, transparent 1px); background-size: 50px 50px;">
+    </div>
+
+    <div class="container position-relative">
+        <div class="glass-card p-5 border-primary border-opacity-25 rounded-5 overflow-hidden animate-on-scroll">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-8">
+                    <h2 class="display-6 fw-bold text-white mb-3">ต้องการความจริงที่ลึกกว่าปกติ?</h2>
+                    <p class="text-silver mb-0 lead">
+                        เราพร้อมให้คำปรึกษาเบื้องต้นฟรี โดยไม่ระบุตัวตน ทีมงานผู้เชี่ยวชาญพร้อมประเมินความเป็นไปได้ของภารกิจภายใน 24 ชั่วโมง
+                    </p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <div class="d-grid d-sm-inline-flex gap-3">
+                        <a href="contact.html" class="btn btn-primary btn-lg rounded-pill px-5 py-3 fw-bold shadow-pulse">
+                            <i class="bi bi-terminal-fill me-2"></i>เริ่มการติดต่อ
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="position-absolute bottom-0 end-0 p-3 opacity-10 font-monospace x-small d-none d-md-block" style="transform: rotate(-5deg);">
+                ACCESS_KEY_ACCEPTED... <br>
+                SECURE_PROTOCOL_INITIALIZED...
+            </div>
+        </div>
+    </div>
+</section>
 ```
 
 ### 📄 `components/footer.html`
 
 ```html
-<footer class="bg-dark text-white pt-5 pb-3 border-top border-secondary border-opacity-25">
+<footer class="bg-dark-section border-top border-white border-opacity-5 pt-5 pb-4">
     <div class="container">
-        <div class="row g-4">
+        <div class="row g-4 mb-5">
             <div class="col-lg-4 col-md-6">
                 <div class="d-flex align-items-center mb-3">
-                    <div class="icon-scan-glow me-2">
-                        <i class="bi bi-incognito text-primary fs-3"></i>
-                    </div>
-                    <span class="h4 fw-bold mb-0 text-uppercase tracking-wider text-glow">นามสมมุติ</span>
+                    <i class="bi bi-fingerprint text-primary fs-3 me-2"></i>
+                    <span class="fw-bold tracking-tighter fs-4 text-white">NAMSOMMUT</span>
                 </div>
-                <p class="text-muted small mb-4 lh-lg">
-                    หน่วยสืบสวนอิสระที่มุ่งเน้นการค้นหาความจริงผ่านข้อมูลดิจิทัลและปฏิบัติการภาคสนาม 
-                    เราทำงานอยู่หลังม่าน เพื่อความปลอดภัยและผลประโยชน์สูงสุดของลูกค้า
+                <p class="text-muted small lh-lg mb-4" style="max-width: 320px;">
+                    หน่วยปฏิบัติการข้อมูลอิสระ ให้บริการสืบสวนและรวบรวมหลักฐานภายใต้โปรโตคอลความปลอดภัยระดับสูงสุด "ความจริงที่ระบบปิดกั้น คือภารกิจของเรา"
                 </p>
                 <div class="d-flex gap-3">
-                    <a href="#" class="social-icon-box" title="Telegram"><i class="bi bi-telegram"></i></a>
-                    <a href="#" class="social-icon-box" title="Line Official"><i class="bi bi-line"></i></a>
-                    <a href="privacy.html" class="social-icon-box" title="Security Protocol"><i class="bi bi-shield-lock-fill"></i></a>
+                    <a href="#" class="text-muted fs-5"><i class="bi bi-line"></i></a>
+                    <a href="#" class="text-muted fs-5"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-muted fs-5"><i class="bi bi-telegram"></i></a>
                 </div>
             </div>
 
             <div class="col-lg-2 col-md-6">
-                <h6 class="fw-bold mb-4 text-primary text-uppercase" style="font-size: 0.85rem; letter-spacing: 1px;">เมนูหลัก</h6>
-                <ul class="list-unstyled small">
-                    <li class="mb-2"><a href="index.html" class="footer-link">หน้าแรก</a></li>
-                    <li class="mb-2"><a href="about.html" class="footer-link">เกี่ยวกับเรา</a></li>
-                    <li class="mb-2"><a href="services.html" class="footer-link">บริการสืบสวน</a></li>
-                    <li class="mb-2"><a href="review.html" class="footer-link">รีวิวลูกค้า</a></li>
+                <h6 class="text-white fw-bold mb-4 font-monospace small tracking-widest text-uppercase">Directory</h6>
+                <ul class="list-unstyled footer-links">
+                    <li class="mb-2"><a href="index.html" class="text-muted text-decoration-none small">Terminal Home</a></li>
+                    <li class="mb-2"><a href="about.html" class="text-muted text-decoration-none small">Agency Profile</a></li>
+                    <li class="mb-2"><a href="services.html" class="text-muted text-decoration-none small">Operations</a></li>
+                    <li class="mb-2"><a href="review.html" class="text-muted text-decoration-none small">Verified Records</a></li>
                 </ul>
             </div>
 
             <div class="col-lg-2 col-md-6">
-                <h6 class="fw-bold mb-4 text-primary text-uppercase" style="font-size: 0.85rem; letter-spacing: 1px;">ความปลอดภัย</h6>
-                <ul class="list-unstyled small text-muted">
-                    <li class="mb-2 d-flex align-items-center"><i class="bi bi-lock-fill me-2 text-primary"></i>นโยบายความเป็นส่วนตัว</li>
-                    <li class="mb-2 d-flex align-items-center"><i class="bi bi-eye-slash-fill me-2 text-primary"></i>การทำลายข้อมูลเคส</li>
-                    <li class="mb-2 d-flex align-items-center"><i class="bi bi-patch-check-fill me-2 text-primary"></i>จรรยาบรรณวิชาชีพ</li>
+                <h6 class="text-white fw-bold mb-4 font-monospace small tracking-widest text-uppercase">Protocol</h6>
+                <ul class="list-unstyled footer-links">
+                    <li class="mb-2"><a href="contact.html" class="text-muted text-decoration-none small">Contact Intel</a></li>
+                    <li class="mb-2"><a href="privacy.html" class="text-muted text-decoration-none small">Data Privacy</a></li>
+                    <li class="mb-2"><a href="404.html" class="text-muted text-decoration-none small">Reporting Error</a></li>
                 </ul>
             </div>
 
             <div class="col-lg-4 col-md-6">
-                <h6 class="fw-bold mb-4 text-primary text-uppercase" style="font-size: 0.85rem; letter-spacing: 1px;">การติดต่อที่ปลอดภัย</h6>
-                <div class="secure-contact-card p-3 rounded-3 border border-secondary border-opacity-25">
-                    <p class="small text-muted mb-3 italic-sm">
-                        <i class="bi bi-info-circle me-1"></i> แนะนำให้ติดต่อผ่านช่องทางที่เข้ารหัส (E2EE)
-                    </p>
-                    <div class="contact-item mb-2">
-                        <a href="tel:02XXXXXXX" class="text-decoration-none text-white d-flex align-items-center">
-                            <i class="bi bi-telephone-fill text-primary me-2"></i> 02-XXX-XXXX
-                        </a>
+                <h6 class="text-white fw-bold mb-4 font-monospace small tracking-widest text-uppercase">System Status</h6>
+                <div class="bg-dark p-3 rounded-3 border border-white border-opacity-5">
+                    <div class="d-flex align-items-center mb-2">
+                        <span class="status-dot"></span>
+                        <span class="font-monospace x-small text-success">UPLINK_SECURED</span>
                     </div>
-                    <div class="contact-item">
-                        <a href="mailto:secure@namsommut.com" class="text-decoration-none text-white d-flex align-items-center">
-                            <i class="bi bi-envelope-at-fill text-primary me-2"></i> secure@namsommut.com
-                        </a>
+                    <div class="font-monospace text-muted" style="font-size: 0.6rem;">
+                        <div>ENCRYPTION: AES-256-GCM</div>
+                        <div>NODE: TH-BKK-01</div>
+                        <div>LAST_UPDATE: 2025-12-18</div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <hr class="border-white border-opacity-5 mb-4">
+
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <p class="x-small text-muted mb-0 font-monospace">
+                    © 2025 NAMSOMMUT INVESTIGATION. ALL RIGHTS RESERVED.
+                </p>
 ```
 
 ### 📄 `components/header.html`
 
 ```html
-<header class="main-header fixed-top animate-fade-in" style="z-index: 1030;">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-75 backdrop-blur border-bottom border-white border-opacity-10 py-3">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="index.html">
-                <div class="logo-wrapper me-2">
-                    <i class="bi bi-fingerprint fs-2 text-primary"></i>
-                </div>
-                <div class="brand-text">
-                    <span class="d-block fw-bold tracking-tighter fs-4 lh-1">NAMSOMMUT</span>
-                    <small class="text-uppercase opacity-50 tracking-widest" style="font-size: 0.6rem;">Elite Investigation</small>
-                </div>
-            </a>
+<nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-transparent" id="main-nav">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center" href="index.html">
+            <div class="logo-wrapper me-2">
+                <i class="bi bi-fingerprint fs-3 text-primary"></i>
+            </div>
+            <div class="brand-text">
+                <span class="fw-bold tracking-tighter fs-4 text-white">NAMSOMMUT</span>
+                <div class="brand-subtext font-monospace">INVESTIGATION</div>
+            </div>
+        </a>
 
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#namsommutNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+        <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navContent" aria-controls="navContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-            <div class="collapse navbar-collapse" id="namsommutNav">
-                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link px-3 text-uppercase small tracking-wider hover-primary" href="index.html">หน้าหลัก</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3 text-uppercase small tracking-wider hover-primary" href="about.html">เกี่ยวกับเรา</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3 text-uppercase small tracking-wider hover-primary" href="#services">บริการลับ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link px-3 text-uppercase small tracking-wider hover-primary" href="contact.html">ส่งคำขอสืบสวน</a>
-                    </li>
-                </ul>
+        <div class="collapse navbar-collapse" id="navContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
+                <li class="nav-item px-lg-2">
+                    <a class="nav-link" href="index.html">TERMINAL</a>
+                </li>
+                <li class="nav-item px-lg-2">
+                    <a class="nav-link" href="about.html">AGENCY</a>
+                </li>
+                <li class="nav-item px-lg-2">
+                    <a class="nav-link" href="services.html">OPERATIONS</a>
+                </li>
+                <li class="nav-item px-lg-2">
+                    <a class="nav-link" href="review.html">VERIFIED</a>
+                </li>
+                
+                <li class="nav-item px-lg-3 d-none d-lg-block">
+                    <div style="width: 1px; height: 20px; background: rgba(255,255,255,0.1);"></div>
+                </li>
 
-                <div class="d-flex align-items-center">
-                    <div class="access-status d-none d-xl-flex align-items-center me-4 opacity-50">
-                        <span class="dot-blink bg-success me-2"></span>
-                        <small class="text-uppercase x-small">Secured Connection</small>
-                    </div>
-                    <a href="https://line.me/ti/p/PCE92r2xrB" target="_blank" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm">
-                        <i class="bi bi-incognito me-2"></i> ปรึกษาด่วน
+                <li class="nav-item mt-3 mt-lg-0">
+                    <a class="btn btn-primary btn-sm rounded-pill px-4 py-2 font-monospace fw-bold shadow-pulse" href="contact.html">
+                        <i class="bi bi-shield-lock-fill me-2"></i>HIRE_AGENT
                     </a>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <div class="status-bar bg-primary bg-opacity-10 py-1 border-bottom border-primary border-opacity-10 d-none d-md-block">
-        <div class="container">
-            <div class="d-flex justify-content-between align-items-center overflow-hidden">
-                <div class="ticker-wrapper">
-                    <small class="text-primary x-small text-uppercase fw-bold animate-ticker">
-                        System Update: ฐานข้อมูลล่าสุด 18 ธ.ค. 2025 | ตรวจพบการเข้าใช้งานจาก IP: [REDACTED] | สถานะเครือข่าย: เข้ารหัส 256-bit
-                    </small>
-                </div>
-                <div class="time-wrapper">
-                    <small id="current-time" class="text-white opacity-50 x-small"></small>
-                </div>
-            </div>
+                </li>
+            </ul>
         </div>
     </div>
+</nav>
+
+<style>
+    /* Inline Header Specific Styles */
+    .logo-wrapper { transition: transform 0.3s ease; }
+    .navbar-brand:hover .logo-wrapper { transform: scale(1.1) rotate(5deg); }
+    
+    @media (max-width: 991.98px) {
+        .navbar-collapse {
+            background: #0a0a0c;
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(0, 123, 255, 0.1);
+            margin-top: 15px;
+        }
+    }
+</style>
 ```
 
 ### 📄 `components/hero.html`
 
 ```html
-<section class="hero-section position-relative overflow-hidden min-vh-100 d-flex align-items-center bg-dark">
-    <div class="hero-overlay position-absolute w-100 h-100" style="background: linear-gradient(135deg, rgba(10, 10, 11, 0.95) 0%, rgba(10, 10, 11, 0.7) 100%); z-index: 1;"></div>
-    
-    <div class="hero-bg-effect position-absolute w-100 h-100" style="background-image: url('assets/img/banner.jpg'); background-size: cover; background-position: center; opacity: 0.3; filter: grayscale(100%);"></div>
+<section class="hero-section position-relative overflow-hidden d-flex align-items-center" style="min-height: 80vh; padding-top: 100px;">
+    <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark z-n1"></div>
+    <div class="hero-glow position-absolute top-50 start-50 translate-middle w-75 h-75 rounded-circle" style="background: radial-gradient(circle, rgba(0,123,255,0.1) 0%, rgba(0,0,0,0) 70%);"></div>
 
-    <div class="container position-relative" style="z-index: 2;">
-        <div class="row justify-content-center">
-            <div class="col-lg-10 text-center">
-                <div class="d-inline-flex align-items-center mb-4 px-3 py-1 border border-primary border-opacity-50 rounded-pill bg-primary bg-opacity-10 animate-fade-in">
-                    <span class="pulse-dot me-2"></span>
-                    <small class="text-primary fw-bold text-uppercase tracking-widest" style="font-size: 0.75rem;">Status: Operations Active (24/7)</small>
+    <div class="container position-relative z-1">
+        <div class="row align-items-center">
+            <div class="col-lg-8 animate-on-scroll">
+                <div class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-2 font-monospace mb-3 x-small">
+                    SYSTEM_ONLINE: ENCRYPTED_CONNECTION
                 </div>
-
-                <h1 class="display-2 fw-bold text-white mb-3">
-                    เมื่อระบบปกติ <span class="text-gradient-blue">เข้าไม่ถึง...</span><br>
-                    <span class="h2 d-block mt-2 fw-light opacity-75">ให้เราเป็นคำตอบสุดท้ายของคุณ</span>
+                <h1 class="display-3 fw-bold text-white mb-4">
+                    เข้าถึงความจริง <br>
+                    <span class="text-gradient-blue">ที่ระบบปิดกั้น</span>
                 </h1>
-
-                <p class="lead text-muted mx-auto mb-5" style="max-width: 700px;">
-                    หน่วยปฏิบัติการสืบสวนอิสระ ผสมผสานเทคโนโลยีการสืบค้นชั้นสูงและเครือข่ายสายข่าวเฉพาะกิจ 
-                    <span class="text-white">เข้าถึงทุกชั้นข้อมูล ปกปิดตัวตนลูกค้า 100%</span>
+                <p class="lead text-silver mb-5 w-75">
+                    เราคือหน่วยปฏิบัติการข่าวกรองอิสระที่พร้อมเจาะฐานข้อมูลเชิงลึก ระบุพิกัด Real-time และสืบสวนทุกรูปแบบภายใต้ความลับขั้นสูงสุด
                 </p>
-
-                <div class="d-grid gap-3 d-sm-flex justify-content-sm-center align-items-center">
-                    <a href="https://line.me/ti/p/PCE92r2xrB" target="_blank" class="btn btn-primary btn-lg px-5 py-3 rounded-pill shadow-pulse d-flex align-items-center justify-content-center">
-                        <i class="bi bi-line fs-4 me-2"></i>
-                        <span>ปรึกษาเคสลับผ่าน LINE</span>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="services.html" class="btn btn-primary rounded-pill px-5 py-3 shadow-pulse font-monospace fw-bold">
+                        INITIATE_OPERATIONS
                     </a>
-                    <a href="#services" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill hover-slide">
-                        <i class="bi bi-shield-lock me-2"></i> บริการและอัตราค่าจ้าง
+                    <a href="about.html" class="btn btn-outline-light rounded-pill px-5 py-3 font-monospace">
+                        AGENCY_PROFILE
                     </a>
-                </div>
-
-                <div class="mt-5 row g-3 justify-content-center opacity-50">
-                    <div class="col-auto d-flex align-items-center mx-3">
-                        <i class="bi bi-check2-circle me-2"></i> <small>Zero-Trace Policy</small>
-                    </div>
-                    <div class="col-auto d-flex align-items-center mx-3">
-                        <i class="bi bi-lock me-2"></i> <small>Military Grade Encryption</small>
-                    </div>
-                    <div class="col-auto d-flex align-items-center mx-3">
-                        <i class="bi bi-eye-slash me-2"></i> <small>Anonymous Consultation</small>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="scroll-down"></div>
 </section>
-
-<style>
-    /* Gradient Text */
-    .text-gradient-blue {
-        background: linear-gradient(90deg, #007bff, #00d4ff);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    /* Pulse Dot for Status */
-```
-
-### 📄 `components/navbar.html`
-
-```html
-<footer class="footer-section bg-dark text-white pt-5 pb-3 border-top border-white border-opacity-10">
-    <div class="container py-4">
-        <div class="row g-4 justify-content-between">
-            
-            <div class="col-lg-4">
-                <div class="footer-brand mb-4">
-                    <div class="d-flex align-items-center mb-2">
-                        <i class="bi bi-fingerprint fs-2 text-primary me-2"></i>
-                        <span class="fw-bold fs-4 tracking-tighter">NAMSOMMUT</span>
-                    </div>
-                    <p class="text-muted small lh-lg">
-                        สถาบันการสืบสวนอิสระระดับสูง (EIG) มุ่งเน้นการค้นหาความจริงผ่านฐานข้อมูลลับและเทคโนโลยีขั้นสูง เรายึดถือความลับของลูกค้าเป็นพันธกิจสูงสุดภายใต้โปรโตคอลความปลอดภัยระดับรัฐบาล
-                    </p>
-                    <div class="security-badges d-flex gap-2 mt-3">
-                        <span class="badge bg-secondary bg-opacity-10 text-muted border border-secondary border-opacity-25 py-2 px-3">
-                            <i class="bi bi-shield-check me-1"></i> AES-256 Encrypted
-                        </span>
-                        <span class="badge bg-secondary bg-opacity-10 text-muted border border-secondary border-opacity-25 py-2 px-3">
-                            <i class="bi bi-eye-slash me-1"></i> No Logs Policy
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-6 col-lg-2">
-                <h6 class="text-uppercase fw-bold mb-4 tracking-widest text-primary">Operations</h6>
-                <ul class="list-unstyled footer-links">
-                    <li><a href="#services" class="text-muted text-decoration-none small d-block mb-2 hover-white">เจาะฐานข้อมูลลับ</a></li>
-                    <li><a href="#services" class="text-muted text-decoration-none small d-block mb-2 hover-white">ระบุพิกัดเป้าหมาย</a></li>
-                    <li><a href="#services" class="text-muted text-decoration-none small d-block mb-2 hover-white">สแกนช่องโหว่ดิจิทัล</a></li>
-                    <li><a href="#services" class="text-muted text-decoration-none small d-block mb-2 hover-white">สืบสวนพฤติกรรม</a></li>
-                </ul>
-            </div>
-
-            <div class="col-6 col-lg-2">
-                <h6 class="text-uppercase fw-bold mb-4 tracking-widest text-primary">Agency</h6>
-                <ul class="list-unstyled footer-links">
-                    <li><a href="about.html" class="text-muted text-decoration-none small d-block mb-2 hover-white">เกี่ยวกับเรา</a></li>
-                    <li><a href="contact.html" class="text-muted text-decoration-none small d-block mb-2 hover-white">รายงานเคสใหม่</a></li>
-                    <li><a href="#" class="text-muted text-decoration-none small d-block mb-2 hover-white">นโยบายความลับ</a></li>
-                    <li><a href="#" class="text-muted text-decoration-none small d-block mb-2 hover-white">ยืนยันตัวตน</a></li>
-                </ul>
-            </div>
-
-            <div class="col-lg-3">
-                <h6 class="text-uppercase fw-bold mb-4 tracking-widest text-danger">Emergency Contact</h6>
-                <p class="text-muted small mb-4">สำหรับการปรึกษาเคสเร่งด่วน 24 ชั่วโมง ข้อมูลจะถูกเข้ารหัสผ่านทางแอปพลิเคชัน LINE</p>
-                <a href="https://line.me/ti/p/PCE92r2xrB" target="_blank" class="btn btn-outline-primary rounded-pill w-100 py-2 d-flex align-items-center justify-content-center hover-pulse">
-                    <i class="bi bi-line fs-5 me-2"></i>
-                    <span>Connect with Agent</span>
-                </a>
-                <div class="mt-3 text-center">
-                    <small class="text-muted x-small">Working Hours: 24/7 (Non-Stop)</small>
-                </div>
-            </div>
-
-        </div>
-
-        <hr class="my-5 border-white border-opacity-10">
-
 ```
 
 ### 📄 `contact.html`
@@ -962,12 +1919,12 @@ const Utils = {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>รายงานเคสลับ | Namsommut Investigation</title>
-    
+    <title>Contact Intel | Namsommut Investigation</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/theme.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
@@ -976,47 +1933,90 @@ const Utils = {
 
     <div id="header-placeholder"></div>
 
-    <main class="section-padding" style="margin-top: 80px;">
-        <div class="container">
+    <main style="padding-top: 120px;">
+        <div class="container mb-5">
             <div class="row g-5">
-                
-                <div class="col-lg-5">
-                    <div class="pe-lg-5">
-                        <div class="badge-status mb-3">Secure Connection Active</div>
-                        <h1 class="display-4 fw-bold text-gradient-blue mb-4">รายงานเคสลับ</h1>
-                        <p class="text-muted mb-5">
-                            ข้อมูลที่คุณส่งจะได้รับการเข้ารหัสระดับสูงสุด และจะถูกส่งถึงเจ้าหน้าที่ระดับสูงโดยตรง 
-                            โปรดเลือกช่องทางที่คุณสะดวกที่สุดเพื่อการประเมินราคาและแนวทางการทำงาน
-                        </p>
+                <div class="col-lg-5 animate-on-scroll">
+                    <h6 class="text-primary font-monospace tracking-widest text-uppercase mb-3">Secure Communication</h6>
+                    <h1 class="display-5 fw-bold mb-4 text-white">ส่งคำขอภารกิจ</h1>
+                    <p class="text-muted mb-5">
+                        กรุณาระบุข้อมูลเบื้องต้นเพื่อให้ทีมงานวิเคราะห์ความยากง่ายและขอบเขตงาน ข้อมูลทั้งหมดจะถูกทำลายทันทีหากไม่มีการตกลงจ้างงาน
+                    </p>
 
-                        <div class="contact-method mb-4 p-4 glass-card border-primary border-opacity-25 shadow-pulse">
-                            <div class="d-flex align-items-start">
-                                <i class="bi bi-line fs-1 text-primary me-3"></i>
-                                <div>
-                                    <h5 class="fw-bold mb-1">ปรึกษาด่วนทาง LINE (แนะนำ)</h5>
-                                    <p class="small text-muted mb-3">เจ้าหน้าที่สแตนบาย 24 ชั่วโมง ข้อมูลถูกลบทันทีหลังปิดเคส</p>
-                                    <a href="https://line.me/ti/p/PCE92r2xrB" target="_blank" class="btn btn-primary rounded-pill px-4">
-                                        แอดไลน์: @namsommut
-                                    </a>
-                                </div>
-                            </div>
+                    <div class="d-flex align-items-center mb-4 p-4 glass-card border-opacity-10">
+                        <div class="icon-box bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                            <i class="bi bi-line text-primary fs-4"></i>
                         </div>
+                        <div>
+                            <div class="text-muted x-small font-monospace">LINE_OFFICIAL</div>
+                            <div class="fw-bold text-white">@Namsommut_Secret</div>
+                        </div>
+                    </div>
 
-                        <div class="security-info p-3 bg-white bg-opacity-5 rounded-4 border border-white border-opacity-10">
-                            <ul class="list-unstyled mb-0">
-                                <li class="small text-muted mb-2"><i class="bi bi-shield-lock text-primary me-2"></i> เข้ารหัสข้อมูลแบบ End-to-End</li>
-                                <li class="small text-muted mb-2"><i class="bi bi-geo-alt text-primary me-2"></i> สถานที่นัดหมายเป็นความลับ (Private Location Only)</li>
-                                <li class="small text-muted"><i class="bi bi-incognito text-primary me-2"></i> สามารถชำระค่าบริการผ่านสกุลเงินดิจิทัล (Crypto) ได้</li>
-                            </ul>
+                    <div class="d-flex align-items-center mb-4 p-4 glass-card border-opacity-10">
+                        <div class="icon-box bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                            <i class="bi bi-envelope-at text-primary fs-4"></i>
+                        </div>
+                        <div>
+                            <div class="text-muted x-small font-monospace">ENCRYPTED_EMAIL</div>
+                            <div class="fw-bold text-white">intel@namsommut.com</div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-primary bg-primary bg-opacity-10 border-primary border-opacity-25 rounded-4 p-4 mt-5">
+                        <div class="d-flex">
+                            <i class="bi bi-shield-lock-fill fs-3 me-3 text-primary"></i>
+                            <div>
+                                <h6 class="fw-bold text-white">NDA Protection</h6>
+                                <p class="small text-muted mb-0">เรามีระบบรักษาความลับข้อมูลลูกค้า 100% และไม่มีการเปิดเผยตัวตนผู้จ้างงานในทุกกรณี</p>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-lg-7">
-                    <div class="glass-card p-4 p-md-5">
-                        <h4 class="fw-bold mb-4">Inquiry Form <small class="text-muted fw-light">(รหัสเคสอัตโนมัติ)</small></h4>
-                        
-                        <form id="contactForm" class="row g-3">
+```
+
+### 📄 `data/cases.json`
+
+```json
+[
+  {
+    "id": "NSM-7702-X",
+    "codename": "Ghost Shadow",
+    "category": "Asset Tracking",
+    "status": "COMPLETED",
+    "timestamp": "2025-11-15 14:20",
+    "location": "Bangkok / Cyber Space",
+    "risk_level": "High"
+  },
+  {
+    "id": "NSM-8194-B",
+    "codename": "Deep Dive Nominee",
+    "category": "Corporate Intel",
+    "status": "COMPLETED",
+    "timestamp": "2025-12-05 09:45",
+    "location": "Cayman Islands (Remote)",
+    "risk_level": "Critical"
+  },
+  {
+    "id": "NSM-1205-S",
+    "codename": "Silent Signal",
+    "category": "Digital Forensic",
+    "status": "SUCCESS",
+    "timestamp": "2025-12-10 23:12",
+    "location": "Private Network",
+    "risk_level": "Medium"
+  }
+]
+```
+
+### 📄 `data/logs.txt`
+
+```
+[2025-12-18 20:15:01] UPLINK ESTABLISHED via Node-09
+[2025-12-18 20:15:03] BYPASSING FIREWALL... SUCCESS
+[2025-12-18 20:15:05] FETCHING CASE_ID: NSM-7702-X
+[2025-12-18 20:15:06] DECRYPTING DATA... 100%
 ```
 
 ### 📄 `data/reviews.json`
@@ -1024,28 +2024,40 @@ const Utils = {
 ```json
 [
   {
-    "id": 1,
-    "client_name": "คุณ ว. (นักธุรกิจอสังหาริมทรัพย์)",
-    "service": "Deep Intel Check",
-    "comment": "ข้อมูลที่ทีมงานหามาได้ 'ลึก' กว่าที่คิดมากครับ ผมเกือบเซ็นสัญญากับนอมินีกลุ่มทุนสีเทาไปแล้ว ถ้าไม่ได้ความเชื่อมโยงชุดนี้ช่วยไว้ คงเสียหายหลายสิบล้าน",
+    "id": "REV-001",
+    "client": "คุณ K. (นักธุรกิจ)",
+    "mission": "สืบทรัพย์สินและเส้นทางการเงิน",
     "rating": 5,
-    "date": "2025-10-12"
+    "comment": "ทำงานมืออาชีพมากครับ ข้อมูลที่ได้ละเอียดกว่าที่คิดไว้เยอะมาก และที่สำคัญคือเก็บความลับดีเยี่ยมจริงๆ",
+    "date": "2025-11-12",
+    "status": "VERIFIED_MISSION"
   },
   {
-    "id": 2,
-    "client_name": "Anonymous (บุคคลทั่วไป)",
-    "service": "Shadow Tracking",
-    "comment": "ตามหาตัวบุคคลที่ปิดทุกช่องทางติดต่อมา 3 ปี ทีมงานใช้เวลาไม่ถึง 10 วันระบุพิกัดกบดานได้แม่นยำมากครับ ทำงานเงียบและปิดงานไวสมคำร่ำลือ",
+    "id": "REV-002",
+    "client": "คุณมด (นามสมมติ)",
+    "mission": "ติดตามพิกัดบุคคล Real-time",
     "rating": 5,
-    "date": "2025-11-05"
+    "comment": "ตอนแรกกังวลว่าจะปลอดภัยไหม แต่ทีมงานให้คำปรึกษาดีมาก รายงานตำแหน่งแม่นยำจนน่าตกใจ ขอบคุณมากค่ะ",
+    "date": "2025-12-05",
+    "status": "VERIFIED_MISSION"
   },
   {
-    "id": 3,
-    "client_name": "Executive Client (Code: Sky)",
-    "service": "Privacy & Scan",
-    "comment": "พบการดักฟังในเครื่องส่วนตัวจริงๆ ครับ ทีมงานกำจัดและวางระบบป้องกันใหม่ให้ทันที ประทับใจความเป็นมืออาชีพและการรักษาความลับลูกค้าเป็นเลิศ",
+    "id": "REV-003",
+    "client": "บริษัท T. Global",
+    "mission": "ตรวจสอบประวัติพนักงานระดับสูง",
+    "rating": 4,
+    "comment": "ข้อมูลประวัติอาชญากรรมและประวัติการทำงานย้อนหลังชัดเจน ช่วยในการตัดสินใจรับคนเข้าทำงานได้มาก",
+    "date": "2025-10-28",
+    "status": "VERIFIED_MISSION"
+  },
+  {
+    "id": "REV-004",
+    "client": "คุณนิรนาม",
+    "mission": "กู้คืนข้อมูลและตรวจสอบมือถือ",
     "rating": 5,
-    "date": "2025-12-01"
+    "comment": "สามารถกู้แชทที่ถูกลบไปนานแล้วกลับมาได้ และเจอแอปดักฟังที่ซ่อนอยู่จริง แนะนำเลยครับสำหรับใครที่สงสัยว่าโดนตาม",
+    "date": "2025-12-15",
+    "status": "VERIFIED_MISSION"
   }
 ]
 ```
@@ -1055,32 +2067,56 @@ const Utils = {
 ```json
 [
   {
-    "id": "sv-intel",
-    "title": "Unlisted Data Retrieval",
-    "subtitle": "เจาะข้อมูลที่ถูกปิดผนึก",
-    "description": "เข้าถึงฐานข้อมูลทะเบียนราษฎร์แฝง, ประวัติอาชญากรรมที่ถูกลบ, และการถือครองทรัพย์สินนอมินีผ่านเครือข่ายเฉพาะทาง",
+    "id": "tracking",
+    "title": "สืบติดตามพิกัดบุคคล",
+    "subtitle": "Real-time Tracking",
+    "icon": "bi-geo-alt-fill",
+    "description": "ระบุตำแหน่งที่ตั้งแม่นยำด้วยระบบสัญญาณดาวเทียมและฐานข้อมูลเครือข่าย พร้อมรายงานความเคลื่อนไหวตลอด 24 ชั่วโมง",
     "features": [
-      "ระบุตัวตนจริงจากเบอร์ลับ/บัญชีม้า",
-      "ตรวจสอบประวัติการเงินเชิงลึก",
-      "ดึงข้อมูล Digital Trace ย้อนหลัง 5 ปี"
+      "ระบุพิกัดละติจูด/ลองจิจูดล่าสุด",
+      "ประวัติการเดินทางย้อนหลัง 30 วัน",
+      "ระบบแจ้งเตือนเมื่อเข้า-ออกพื้นที่"
     ],
-    "price_range": "เริ่มต้น 8,500.-",
-    "icon": "bi-incognito",
-    "category": "Exclusive Intel"
+    "price_range": "START_15,000_THB"
   },
   {
-    "id": "sv-shadow",
-    "title": "Shadow Tracking",
-    "subtitle": "ระบุพิกัด 실시간 (Real-time)",
-    "description": "แกะรอยพิกัดล่าสุดจากสัญญาณ Cell Site และเครือข่ายสายข่าวภาคสนาม ระบุตำแหน่งที่กบดานแม่นยำภายใน 24 ชม.",
+    "id": "digital",
+    "title": "ตรวจสอบข้อมูลดิจิทัล",
+    "subtitle": "Cyber Investigation",
+    "icon": "bi-cpu-fill",
+    "description": "เจาะลึกข้อมูลการสื่อสาร ตรวจสอบแอปพลิเคชันดักฟัง และกู้คืนบันทึกประวัติที่ถูกลบในอุปกรณ์พกพาทุกระบบ",
     "features": [
-      "ติดตามเป้าหมายพร้อมหลักฐานภาพถ่าย 4K",
-      "ระบุพิกัดที่พักและที่ทำงานปัจจุบัน",
-      "รายงานความเคลื่อนไหวผ่านช่องทางลับ"
+      "ตรวจหามัลแวร์และแอปสปาย",
+      "วิเคราะห์ประวัติการสนทนาลับ",
+      "ตรวจสอบความปลอดภัยโซเชียลมีเดีย"
     ],
-    "price_range": "เริ่มต้น 18,000.-",
-    "icon": "bi-radar",
-    "category": "High-Stakes Ops"
+    "price_range": "START_25,000_THB"
+  },
+  {
+    "id": "asset",
+    "title": "สืบทรัพย์สิน & บัญชีม้า",
+    "subtitle": "Financial Intelligence",
+    "icon": "bi-bank2",
+    "description": "ตรวจสอบเส้นทางการเงิน ค้นหาทรัพย์สินที่ถูกซ่อนเร้น และระบุตัวตนเจ้าของบัญชีปลายทางในคดีฉ้อโกง",
+    "features": [
+      "ตรวจสอบชื่อผู้ครอบครองบัญชี",
+      "เช็คประวัติอาชญากรรมทางการเงิน",
+      "สืบค้นโฉนดและที่ดินครอบครอง"
+    ],
+    "price_range": "QUOTATION_BASED"
+  },
+  {
+    "id": "background",
+    "title": "สืบประวัติเชิงลึก",
+    "subtitle": "Deep Background Check",
+    "icon": "bi-person-badge-fill",
+    "description": "เข้าถึงฐานข้อมูลทะเบียนราษฎร์ ประวัติการทำงาน และพฤติกรรมส่วนบุคคลเพื่อใช้ประกอบการตัดสินใจทางธุรกิจหรือครอบครัว",
+    "features": [
+      "คัดสำเนาทะเบียนราษฎร์",
+      "ตรวจสอบประวัติการสมรส/หย่า",
+      "ยืนยันวุฒิการศึกษาและที่ทำงาน"
+    ],
+    "price_range": "START_10,000_THB"
   }
 ]
 ```
@@ -1089,19 +2125,17 @@ const Utils = {
 
 ```json
 {
-  "company_name": "Namsommut Investigation",
-  "company_name_en": "Namsommut Group",
-  "slogan": "The Truth Has No Alias - ความจริงไม่มีนามสมมุติ",
-  "description": "หน่วยปฏิบัติการสืบสวนอิสระ ผสมผสานเทคโนโลยีสืบค้นชั้นสูงและเครือข่ายสายข่าวเฉพาะกิจ เพื่อมอบคำตอบที่คุณหาจากระบบปกติไม่ได้",
-  "contact": {
-    "email": "private@namsommut.com",
-    "phone": "สายด่วนพิเศษ (เฉพาะเคสยืนยัน)",
-    "address": "Secure Location (กรุณานัดหมายออนไลน์)",
-    "working_hours": "Operations 24/7"
+  "agency_name": "Namsommut Investigation",
+  "slogan": "เข้าถึงความจริง ที่ระบบปิดกั้น",
+  "description": "หน่วยปฏิบัติการข่าวกรองอิสระที่พร้อมเจาะฐานข้อมูลเชิงลึก ระบุพิกัด Real-time และสืบสวนทุกรูปแบบภายใต้ความลับขั้นสูงสุด",
+  "system_info": {
+    "node": "TH-BKK-01",
+    "encryption": "AES-256-GCM",
+    "protocol": "ACTIVE_SECURE"
   },
-  "social": {
-    "line": "https://line.me/ti/p/PCE92r2xrB",
-    "telegram": "@namsommut_detective"
+  "contact": {
+    "line": "@namsommut",
+    "email": "intel@namsommut.com"
   }
 }
 ```
@@ -1111,31 +2145,28 @@ const Utils = {
 ```json
 [
   {
-    "id": "member-01",
-    "name": "Alpha (The Operator)",
-    "role": "Field Intelligence Director",
-    "specialty": "การระบุพิกัดบุคคลและยุทธวิธีภาคสนาม",
-    "bio": "ผู้กุมเครือข่ายสายข่าวภาคสนามทั่วประเทศ เชี่ยวชาญการแกะรอยพิกัดสด (Real-time Tracking) และการเข้าถึงพื้นที่ปิดเพื่อเก็บหลักฐานสำคัญที่ระบบดิจิทัลเข้าไม่ถึง",
+    "id": "agent-01",
+    "name": "COMMANDER ALPHA",
+    "role": "Chief Intelligence Officer",
     "image": "assets/img/team1.jpg",
-    "icon": "bi-crosshair"
+    "icon": "bi-shield-shaded",
+    "bio": "ผู้เชี่ยวชาญด้านการวางแผนกลยุทธ์และวิเคราะห์ข้อมูลข่าวกรอง มีประสบการณ์ในหน่วยงานความมั่นคงมากกว่า 15 ปี"
   },
   {
-    "id": "member-02",
-    "name": "Neon (The Architect)",
-    "role": "Digital Forensic Specialist",
-    "specialty": "OSINT & Private Database Access",
-    "bio": "ผู้เชี่ยวชาญการเจาะฐานข้อมูลปิดและการกู้คืนร่องรอยดิจิทัล สามารถเข้าถึงข้อมูลทะเบียนราษฎร์แฝงและประวัติที่ถูกลบออกจากระบบสารสนเทศทั่วไป",
+    "id": "agent-02",
+    "name": "AGENT K",
+    "role": "Cyber Security Specialist",
     "image": "assets/img/team2.jpg",
-    "icon": "bi-cpu-fill"
+    "icon": "bi-cpu",
+    "bio": "ดูแลด้านการเจาะระบบตรวจสอบ (Penetration Testing) และการกู้คืนข้อมูลดิจิทัลที่ถูกทำลายหรือซ่อนเร้น"
   },
   {
-    "id": "member-03",
-    "name": "Echo (The Fixer)",
-    "role": "Strategic Analyst & Liaison",
-    "specialty": "การวิเคราะห์ช่องโหว่และประสานงานภายใน",
-    "bio": "ที่ปรึกษาด้านการจัดการหลักฐานและการปิดช่องโหว่ทางกฎหมาย ทำหน้าที่เปลี่ยน 'ข้อมูลลับ' ให้เป็น 'อำนาจต่อรอง' ที่ทรงประสิทธิภาพที่สุดสำหรับลูกค้า",
+    "id": "agent-03",
+    "name": "OPERATOR V",
+    "role": "Field Surveillance Lead",
     "image": "assets/img/team3.jpg",
-    "icon": "bi-file-earmark-lock-fill"
+    "icon": "bi-eye",
+    "bio": "หัวหน้าทีมปฏิบัติการภาคสนาม เชี่ยวชาญการติดตามพิกัดและการพรางตัวเพื่อเก็บหลักฐานในพื้นที่จริง"
   }
 ]
 ```
@@ -1148,61 +2179,61 @@ const Utils = {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Namsommut Investigation | ความจริงไม่มีนามสมมุติ</title>
-    
-    <meta name="description" content="บริการนักสืบเอกชนมืออาชีพ เจาะฐานข้อมูลลับ ระบุพิกัด และสืบสวนทุกรูปแบบด้วยเทคโนโลยีขั้นสูง">
-    <meta name="keywords" content="นักสืบเอกชน, ตามตัว, สืบชู้สาว, เจาะข้อมูล, พิกัดมือถือ, นักสืบนามสมมุติ">
-    
+    <title>Namsommut Investigation | หน่วยปฏิบัติการข้อมูลลับ</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/theme.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
 
     <style>
-        /* Loading Overlay สำหรับสร้างความรู้สึกเหมือนกำลังเข้าสู่ระบบลับ */
-        #loader {
+        /* Critical CSS for System Loader */
+        #system-loader {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background: #050505;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            z-index: 9999; transition: opacity 0.5s ease;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+        .loader-terminal {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: #007bff; /* Primary Blue */
+            max-width: 300px;
+            text-align: center;
         }
     </style>
 </head>
 <body class="bg-dark text-white">
 
-    <div id="loader">
-        <i class="bi bi-fingerprint text-primary fs-1 mb-3 animate-pulse"></i>
-        <div class="text-primary font-monospace small">INITIALIZING SECURE PROTOCOL...</div>
+    <div id="system-loader">
+        <div class="spinner-border text-primary mb-3" role="status"></div>
+        <div class="loader-terminal" id="loader-text">INITIALIZING_SECURE_UPLINK...</div>
     </div>
 
     <div id="header-placeholder"></div>
+    <div id="hero-placeholder"></div>
 
-    <main>
-        <div id="hero-placeholder"></div>
-
-        <section id="services" class="section-padding bg-dark-section">
-            <div class="container">
-                <div class="text-center mb-5">
-                    <h2 class="display-5 fw-bold text-gradient-blue mb-3">OPERATIONAL SERVICES</h2>
-                    <p class="text-muted mx-auto" style="max-width: 600px;">
-                        เราใช้เครื่องมือระดับสูงและเครือข่ายสายข่าวเฉพาะกิจ เพื่อเข้าถึงความจริงที่คุณต้องการ
-                    </p>
+    <section class="section-padding border-top border-white border-opacity-5">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-end mb-5 animate-on-scroll">
+                <div>
+                    <h6 class="text-primary font-monospace tracking-widest text-uppercase">Operational Services</h6>
+                    <h2 class="display-6 fw-bold text-white">ขอบเขตการปฏิบัติงาน</h2>
                 </div>
-                
-                <div id="service-list" class="row g-4">
-                    <div class="text-center p-5">
-                        <div class="spinner-border text-primary" role="status"></div>
-                        <div class="mt-2 small text-muted">ACCESSING DATABASE...</div>
-                    </div>
+                <div class="d-none d-md-block">
+                    <a href="services.html" class="text-primary text-decoration-none font-monospace x-small tracking-widest">
+                        VIEW_ALL_PROTOCOLS <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
                 </div>
             </div>
-        </section>
 ```
 
 ### 📄 `privacy.html`
@@ -1213,12 +2244,12 @@ const Utils = {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>นโยบายความเป็นส่วนตัว | Namsommut Investigation</title>
-    
+    <title>Privacy Protocol | Namsommut Investigation</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/theme.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
@@ -1227,47 +2258,47 @@ const Utils = {
 
     <div id="header-placeholder"></div>
 
-    <main class="section-padding" style="margin-top: 80px;">
-        <div class="container">
+    <main style="padding-top: 120px;">
+        <div class="container py-5">
             <div class="row justify-content-center">
-                <div class="col-lg-10">
-                    
-                    <div class="mb-5 border-start border-primary border-4 ps-4">
-                        <h1 class="display-5 fw-bold text-white">PRIVACY <span class="text-primary">POLICY</span></h1>
-                        <p class="text-muted small font-monospace">DOCUMENT ID: NSM-P-2025 // CLASSIFIED: TOP SECRET</p>
+                <div class="col-lg-8 animate-on-scroll">
+                    <div class="text-center mb-5">
+                        <i class="bi bi-shield-lock text-primary display-4 mb-3"></i>
+                        <h1 class="fw-bold">นโยบายความเป็นส่วนตัว</h1>
+                        <p class="text-muted font-monospace x-small">DATA_PROTECTION_PROTOCOL_V1.1</p>
                     </div>
 
-                    <div class="glass-card p-4 p-md-5 lh-lg">
+                    <div class="glass-card p-5 border-white border-opacity-5">
                         <section class="mb-5">
-                            <h4 class="text-primary mb-3 fw-bold"><i class="bi bi-shield-check me-2"></i> 1. การเก็บรักษาความลับสูงสุด (Zero-Trace Policy)</h4>
-                            <p class="text-silver">
-                                เรายึดถือว่าข้อมูลส่วนตัวของลูกค้าเป็นพันธกิจสูงสุด ข้อมูลที่ใช้ในการปรึกษาและดำเนินเคสจะถูกจัดเก็บในระบบที่มีการเข้ารหัส **AES-256** และจะมีการทำลายข้อมูล (Wiping) ทันทีภายใน 24 ชั่วโมงหลังจากจบภารกิจและส่งมอบงานเสร็จสิ้น
+                            <h4 class="text-primary fw-bold mb-3">1. การจัดเก็บข้อมูล (Data Collection)</h4>
+                            <p class="text-silver small lh-lg">
+                                เราจัดเก็บเฉพาะข้อมูลที่จำเป็นต่อการดำเนินภารกิจเท่านั้น ข้อมูลส่วนบุคคล นามสมมติ และช่องทางการติดต่อจะถูกเข้ารหัสผ่านระบบ AES-256 ทันทีที่เข้าสู่ฐานข้อมูลของเรา
                             </p>
                         </section>
 
                         <section class="mb-5">
-                            <h4 class="text-primary mb-3 fw-bold"><i class="bi bi-cpu me-2"></i> 2. ข้อมูลที่เราจัดเก็บ</h4>
-                            <p class="text-silver">ในการใช้บริการ เราจะจัดเก็บข้อมูลเพียงเท่าที่จำเป็นต่อการติดต่อสื่อสารและการดำเนินงานเท่านั้น ได้แก่:</p>
-                            <ul class="text-muted">
-                                <li>ชื่อหรือนามสมมุติสำหรับการระบุตัวตนในภารกิจ</li>
-                                <li>ช่องทางติดต่อที่ท่านเลือก (LINE, Telegram หรือ Signal)</li>
-                                <li>ข้อมูลพื้นฐานของเป้าหมายเพื่อใช้ในการวิเคราะห์และประเมินผล</li>
-                            </ul>
-                        </section>
-
-                        <section class="mb-5">
-                            <h4 class="text-primary mb-3 fw-bold"><i class="bi bi-eye-slash me-2"></i> 3. มาตรการ "ไม่เปิดเผยตัวตน"</h4>
-                            <p class="text-silver">
-                                เราจะไม่เปิดเผยข้อมูลลูกค้าแก่บุคคลที่สาม ไม่ว่ากรณีใดๆ เว้นแต่จะได้รับคำยินยอมเป็นลายลักษณ์อักษรจากท่าน หรือเป็นไปตามคำสั่งศาลในกรณีร้ายแรงที่เกี่ยวข้องกับอาชญากรรมร้ายแรงเท่านั้น
+                            <h4 class="text-primary fw-bold mb-3">2. การทำลายข้อมูล (Data Destruction)</h4>
+                            <p class="text-silver small lh-lg">
+                                เมื่อภารกิจสิ้นสุดและมีการส่งมอบหลักฐานเรียบร้อยแล้ว ข้อมูลทั้งหมดในส่วนของ "ระหว่างการปฏิบัติงาน" จะถูกทำลายทิ้ง (Secure Wipe) ภายใน 7 วันทำการ เพื่อป้องกันการรั่วไหลในอนาคต
                             </p>
                         </section>
 
                         <section class="mb-5">
-                            <h4 class="text-primary mb-3 fw-bold"><i class="bi bi-key me-2"></i> 4. การสื่อสารที่ปลอดภัย</h4>
-                            <p class="text-silver">
-                                เราแนะนำให้ลูกค้าสื่อสารผ่านช่องทางที่รองรับ **End-to-End Encryption** เช่น LINE หรือ Telegram เพื่อป้องกันการดักจับข้อมูลจากบุคคลภายนอก ทางเราจะไม่รับผิดชอบต่อข้อมูลที่ลูกค้านำเสนอผ่านช่องทางที่ไม่ปลอดภัย
+                            <h4 class="text-primary fw-bold mb-3">3. การรักษาความลับ (Confidentiality)</h4>
+                            <p class="text-silver small lh-lg">
+                                เจ้าหน้าที่ปฏิบัติการทุกคนมีหน้าที่ปฏิบัติตามสัญญาไม่เปิดเผยข้อมูล (Non-Disclosure Agreement) ข้อมูลของลูกค้าจะไม่ถูกส่งต่อให้กับบุคคลที่สามหรือหน่วยงานใดๆ เว้นแต่จะเป็นการร้องขอจากเจ้าของข้อมูลเอง
                             </p>
                         </section>
+
+                        <section>
+                            <h4 class="text-primary fw-bold mb-3">4. มาตรฐานความปลอดภัย (Security Standard)</h4>
+                            <p class="text-silver small lh-lg mb-0">
+                                เว็บไซต์และระบบสื่อสารของเราใช้การเชื่อมต่อแบบ End-to-End Encryption และมีระบบตรวจสอบการบุกรุก (IDS) ตลอด 24 ชั่วโมง เพื่อให้มั่นใจว่าการสื่อสารระหว่างท่านและเราปลอดภัยที่สุด
+                            </p>
+                        </section>
+                    </div>
+
+                    <div class="mt-5 text-center">
 ```
 
 ### 📄 `review.html`
@@ -1278,12 +2309,12 @@ const Utils = {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>บันทึกความสำเร็จ | Namsommut Investigation</title>
-    
+    <title>Verified Records | Namsommut Investigation</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/theme.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
@@ -1292,47 +2323,47 @@ const Utils = {
 
     <div id="header-placeholder"></div>
 
-    <main class="section-padding" style="margin-top: 80px;">
-        <div class="container">
-            
-            <div class="row mb-5 justify-content-center">
-                <div class="col-lg-8 text-center">
-                    <div class="badge-status mb-3">Public Case Logs</div>
-                    <h1 class="display-4 fw-bold text-gradient-blue mb-3">บันทึกความสำเร็จ</h1>
-                    <p class="text-muted">
-                        รวมความคิดเห็นจากผู้รับบริการจริง (ข้อมูลตัวตนและรหัสเคสถูกจัดทำเป็นนามสมมุติเพื่อความปลอดภัย) 
-                        เราภาคภูมิใจที่ได้มอบความจริงให้แก่ลูกค้ากว่า 1,200 รายทั่วประเทศ
-                    </p>
+    <main style="padding-top: 100px;">
+        <section class="py-5">
+            <div class="container text-center animate-on-scroll">
+                <div class="d-inline-block p-2 bg-primary bg-opacity-10 rounded-circle mb-3">
+                    <i class="bi bi-shield-check text-primary fs-1"></i>
                 </div>
+                <h1 class="display-5 fw-bold mb-3">บันทึกผลการปฏิบัติงาน</h1>
+                <p class="text-muted mx-auto" style="max-width: 600px;">
+                    รวบรวมคำยืนยันจากผู้ใช้บริการจริงภายใต้มาตรการปกปิดตัวตน ข้อมูลทุกอย่างได้รับการยืนยันว่ามีความพึงพอใจในระดับสูง
+                </p>
+                <div class="divider mx-auto my-4"></div>
             </div>
+        </section>
 
-            <div id="review-list" class="row g-4 mb-5">
-                <div class="col-12 text-center py-5">
-                    <div class="spinner-border text-primary mb-3" role="status"></div>
-                    <p class="font-monospace x-small text-muted">DECRYPTING TESTIMONIALS...</p>
+        <section class="pb-5">
+            <div class="container">
+                <div id="full-review-list" class="row g-4">
+                    <div class="col-12 text-center py-5">
+                        <div class="spinner-border text-primary mb-3" role="status"></div>
+                        <p class="font-monospace x-small text-muted">ACCESSING_RECORDS...</p>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <div class="row g-4 mt-5">
-                <div class="col-md-4">
-                    <div class="glass-card p-4 text-center h-100 border-primary border-opacity-10">
-                        <div class="h2 fw-bold text-primary mb-1">98%</div>
-                        <div class="small text-uppercase tracking-widest opacity-50">Success Rate</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="glass-card p-4 text-center h-100 border-primary border-opacity-10">
-                        <div class="h2 fw-bold text-primary mb-1">24/7</div>
-                        <div class="small text-uppercase tracking-widest opacity-50">Operational Support</div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="glass-card p-4 text-center h-100 border-primary border-opacity-10">
-                        <div class="h2 fw-bold text-primary mb-1">100%</div>
-                        <div class="small text-uppercase tracking-widest opacity-50">Confidentiality</div>
-                    </div>
-                </div>
+        <section class="section-padding bg-dark-section border-top border-white border-opacity-5">
+            <div class="container text-center animate-on-scroll">
+                <h3 class="fw-bold mb-4">พร้อมเริ่มภารกิจของคุณหรือยัง?</h3>
+                <a href="contact.html" class="btn btn-primary btn-lg rounded-pill px-5 shadow-pulse">
+                    ติดต่อเจ้าหน้าที่ทันที
+                </a>
             </div>
+        </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/render.js"></script>
 ```
 
 ### 📄 `scripts/project-summary.sh`
@@ -1408,12 +2439,12 @@ while read -r file; do
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>บริการปฏิบัติการ | Namsommut Investigation</title>
-    
+    <title>Operations & Services | Namsommut Investigation</title>
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
-    
+
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/theme.css">
     <link rel="stylesheet" href="assets/css/responsive.css">
@@ -1422,47 +2453,47 @@ while read -r file; do
 
     <div id="header-placeholder"></div>
 
-    <section class="section-padding" style="margin-top: 80px; background: linear-gradient(to bottom, #050505, #0a0a0b);">
-        <div class="container">
-            <div class="row justify-content-center text-center">
-                <div class="col-lg-8">
-                    <div class="badge-status mb-3 shadow-pulse">Mission Catalog Active</div>
-                    <h1 class="display-4 fw-bold text-gradient-blue mb-4">บริการปฏิบัติการลับ</h1>
-                    <p class="text-muted lead">
-                        เลือกประเภทภารกิจที่คุณต้องการ ทุกกระบวนการดำเนินการภายใต้โปรโตคอลความลับสูงสุด 
-                        และเข้าถึงฐานข้อมูลเชิงลึกที่เราจัดเตรียมไว้
-                    </p>
+    <main style="padding-top: 100px;">
+        <section class="py-5 border-bottom border-white border-opacity-5">
+            <div class="container text-center animate-on-scroll">
+                <h6 class="text-primary font-monospace tracking-widest text-uppercase">Operational Scope</h6>
+                <h1 class="display-5 fw-bold mb-3">ขอบเขตภารกิจ</h1>
+                <p class="text-muted mx-auto" style="max-width: 600px;">
+                    ทุกภารกิจดำเนินการภายใต้มาตรฐานความปลอดภัยสูงสุด ข้อมูลที่ได้ผ่านการตรวจสอบกรองความถูกต้อง 100% ก่อนส่งถึงมือลูกค้า
+                </p>
+            </div>
+        </section>
+
+        <section class="section-padding">
+            <div class="container">
+                <div id="service-list" class="row g-4">
+                    <div class="col-12 text-center py-5">
+                        <div class="spinner-border text-primary mb-3" role="status"></div>
+                        <p class="font-monospace x-small text-muted">ACCESSING DATABASE...</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section class="section-padding bg-dark-section">
-        <div class="container">
-            <div class="d-flex justify-content-center gap-2 mb-5 flex-wrap">
-                <button class="btn btn-sm btn-outline-primary rounded-pill px-4 active">ทั้งหมด</button>
-                <button class="btn btn-sm btn-outline-secondary rounded-pill px-4">สืบชู้สาว</button>
-                <button class="btn btn-sm btn-outline-secondary rounded-pill px-4">ติดตามพิกัด</button>
-                <button class="btn btn-sm btn-outline-secondary rounded-pill px-4">เจาะข้อมูล</button>
-            </div>
-
-            <div id="service-list" class="row g-4">
-                <div class="col-12 text-center py-5">
-                    <div class="spinner-border text-primary mb-3" role="status"></div>
-                    <p class="font-monospace x-small text-muted">ACCESSING OPERATIONS DATABASE...</p>
+        <section class="pb-5">
+            <div class="container">
+                <div class="glass-card p-5 animate-on-scroll border-primary border-opacity-10">
+                    <div class="row align-items-center">
+                        <div class="col-lg-8">
+                            <h3 class="fw-bold mb-3 text-white">ต้องการบริการเฉพาะทางหรือไม่?</h3>
+                            <p class="text-muted mb-0">หากภารกิจของคุณมีความซับซ้อนสูงหรืออยู่นอกเหนือจากรายการข้างต้น เรามีทีมที่ปรึกษาเพื่อวางแผนกลยุทธ์เฉพาะกรณี (Custom Intelligence Operation)</p>
+                        </div>
+                        <div class="col-lg-4 text-lg-end mt-4 mt-lg-0">
+                            <a href="contact.html" class="btn btn-primary btn-lg rounded-pill px-5 shadow-pulse">ปรึกษาเคสพิเศษ</a>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
-    <section class="section-padding border-top border-white border-opacity-10">
-        <div class="container">
-            <div class="row g-5">
-                <div class="col-lg-6">
-                    <h2 class="fw-bold mb-4">ขั้นตอนการเริ่มภารกิจ</h2>
-                    <div class="step-item d-flex mb-4">
-                        <div class="step-num text-primary fw-bold font-monospace me-3">01.</div>
-                        <div>
+    <div id="footer-placeholder"></div>
+
 ```
 
 ---

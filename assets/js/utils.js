@@ -1,111 +1,86 @@
 /**
-* Namsommut Investigation - Utility Tools
-* 🛠️ Helpers for Component Loading, Security Mockups & Data Handling
-*/
+ * Namsommut Investigation - Utility Functions
+ * 🛠️ Function: Animations, Observers, and UI Helpers
+ * 🟢 Status: Production Ready (Formatted for PROJECT_SUMMARY)
+ */
 
 const Utils = {
-  /**
-  * 1. ฟังก์ชันโหลดไฟล์ HTML เข้ามาแสดงใน Placeholder (Improved)
-  * เพิ่มการประมวลผล Script ภายใน Component ที่โหลดมา
-  */
-  loadComponent: async (elementId, url) => {
-    const container = document.getElementById(elementId);
-    if (!container) return;
+    /**
+     * 1. ระบบตรวจจับ Element เพื่อเริ่มเล่น Animation (Scroll Reveal)
+     * ทำงานร่วมกับ Class .animate-on-scroll ใน HTML
+     */
+    initObserver: function() {
+        const options = {
+            root: null,
+            threshold: 0.15, // เริ่มเล่นเมื่อ Element โผล่มา 15%
+            rootMargin: "0px 0px -50px 0px"
+        };
 
-    try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const html = await response.text();
-      container.innerHTML = html;
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // เพิ่ม Class 'appear' เพื่อเริ่มรัน CSS Animation
+                    entry.target.classList.add('appear');
+                    // เลิกตรวจจับหลังจากแสดงผลแล้วเพื่อประหยัด RAM
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, options);
 
-      // Dispatch event เพื่อแจ้งเตือนระบบว่า Component พร้อมใช้งาน
-      window.dispatchEvent(new CustomEvent('componentLoaded', {
-        detail: {
-          id: elementId, path: url
-        }
-      }));
+        // ตรวจจับทุก Element ที่ต้องการ Animation
+        const targets = document.querySelectorAll('.animate-on-scroll');
+        targets.forEach(target => observer.observe(target));
+        
+        console.log(`✅ [System]: Observer initialized on ${targets.length} nodes.`);
+    },
 
-      return true;
-    } catch (error) {
-      console.error(`%c🔒 Security Alert: Failed to fetch module [${url}]`, "color: #ff4d4d", error);
-      container.innerHTML = `<div class="text-danger font-monospace x-small p-3">ACCESS_DENIED: RESOURCE_ENCRYPTED_OR_MISSING</div>`;
-      return false;
+    /**
+     * 2. ระบบจัดการ Navbar เมื่อมีการ Scroll (Sticky & Glass Effect)
+     */
+    handleScroll: function() {
+        const navbar = document.querySelector('.navbar');
+        if (!navbar) return;
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > CONFIG.UI_SETTINGS.STICKY_HEADER_OFFSET) {
+                navbar.classList.add('navbar-scrolled', 'glass-card-sm');
+            } else {
+                navbar.classList.remove('navbar-scrolled', 'glass-card-sm');
+            }
+        });
+    },
+
+    /**
+     * 3. ระบบ Smooth Scroll สำหรับ Anchor Links
+     */
+    initSmoothScroll: function() {
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
     }
-  },
-
-  /**
-  * 2. ฟังก์ชันจัดรูปแบบราคา
-  */
-  formatCurrency: (amount) => {
-    return new Intl.NumberFormat('th-TH', {
-      style: 'currency',
-      currency: 'THB',
-      minimumFractionDigits: 0
-    }).format(amount);
-  },
-
-  /**
-  * 3. ระบบจำลองสถานะเครือข่าย (Live Security Logs)
-  * คืนค่าเป็น Object เพื่อให้นำไปแสดงผลได้หลายรูปแบบ
-  */
-  getSecurityStatus: () => {
-    const nodes = ["BKK-GATEWAY-01",
-      "HK-PROXY-NODE",
-      "ENCRYPT-RELAY-09"];
-    const status = ["ENCRYPTED",
-      "OPERATIONAL",
-      "STEALTH_MODE"];
-    const latency = Math.floor(Math.random() * 150) + 20;
-
-    return {
-      node: nodes[Math.floor(Math.random() * nodes.length)],
-      status: status[Math.floor(Math.random() * status.length)],
-      ms: `${latency}ms`
-    };
-  },
-
-  /**
-  * 4. ระบบป้องกันข้อมูล (Data Protection)
-  * ป้องกันการคัดลอกในส่วนที่เป็นข้อมูลลับ (ใช้เฉพาะจุด)
-  */
-  initProtection: () => {
-    // แจ้งเตือนใน Console เพื่อความเท่และป้องกันเบื้องต้น
-    console.log("%c⚠️ WARNING: AUTHORIZED PERSONNEL ONLY", "color: yellow; font-size: 20px; font-weight: bold;");
-    console.log("All access and operations are logged under AES-256 protocol.");
-
-    // ฟังก์ชันเสริม: ป้องกันการกด Inspect Element (Optional)
-    /* document.onkeydown = (e) => {
-            if(e.keyCode == 123) return false; // F12
-        }
-        */
-  },
-
-  /**
-  * 5. ฟังก์ชันดึงพารามิเตอร์จาก URL
-  */
-  getQueryParam: (param) => {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
-  },
-
-  /**
-  * 6. ฟังก์ชันหน่วงเวลา (Async Delay)
-  */
-  sleep: (ms) => new Promise(resolve => setTimeout(resolve, ms)),
-
-  /**
-  * 7. ฟังก์ชันสำหรับสร้างข้อความแบบสุ่ม (Cyber Glitch Text)
-  * ใช้สำหรับสร้างเอฟเฟกต์ตอนโหลดข้อมูล
-  */
-  generateGlitchText: (length) => {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
-    let result = "";
-    for (let i = 0; i < length; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return result;
-  }
 };
 
-// ส่งออกเป็น Global Object
+/**
+ * เริ่มต้นทำงานเมื่อ DOM และ Config พร้อม
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    // รันฟังก์ชันพื้นฐาน
+    Utils.handleScroll();
+    Utils.initSmoothScroll();
+    
+    // หมายเหตุ: Utils.initObserver() จะถูกเรียกซ้ำใน render.js 
+    // หลังจากโหลดข้อมูล JSON เสร็จเพื่อให้ตรวจจับการ์ดใหม่ๆ ได้
+    Utils.initObserver();
+});
+
+// ส่งออกเป็น Global เพื่อให้ render.js เรียกใช้ได้
 window.Utils = Utils;

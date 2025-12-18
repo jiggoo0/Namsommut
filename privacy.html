@@ -1,130 +1,76 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Privacy Policy (Classified) | Namsommut Investigation</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Protocol | Namsommut Investigation</title>
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="assets/css/main.css">
-  <link rel="stylesheet" href="assets/css/theme.css">
-  <link rel="stylesheet" href="assets/css/responsive.css">
-
-  <style>
-    .glass-card {
-      background: rgba(10, 10, 10, 0.8);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-    .text-silver {
-      color: #b0b0b0;
-    }
-    section h4 {
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      font-size: 1.1rem;
-    }
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      background: #00ff41;
-      border-radius: 50%;
-      display: inline-block;
-      margin-right: 10px;
-      box-shadow: 0 0 10px #00ff41;
-    }
-  </style>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
 </head>
 <body class="bg-dark text-white">
 
-  <div id="header-placeholder"></div>
+    <div id="header-placeholder"></div>
 
-  <main class="section-padding" style="margin-top: 80px;">
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-10 animate-on-scroll">
+    <main style="padding-top: 120px;">
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 animate-on-scroll">
+                    <div class="text-center mb-5">
+                        <i class="bi bi-shield-lock text-primary display-4 mb-3"></i>
+                        <h1 class="fw-bold">นโยบายความเป็นส่วนตัว</h1>
+                        <p class="text-muted font-monospace x-small">DATA_PROTECTION_PROTOCOL_V1.1</p>
+                    </div>
 
-          <div class="mb-5 border-start border-primary border-4 ps-4">
-            <div class="d-flex align-items-center mb-2">
-              <span class="status-dot"></span>
-              <small class="font-monospace text-primary">ENCRYPTED PROTOCOL ACTIVE</small>
-            </div>
-            <h1 class="display-5 fw-bold text-white">PRIVACY <span class="text-primary">POLICY</span></h1>
-            <p class="text-muted small font-monospace mb-0">
-              DOCUMENT ID: NSM-P-2025 // LEVEL: TOP SECRET // ZERO-TRACE
-            </p>
-          </div>
+                    <div class="glass-card p-5 border-white border-opacity-5">
+                        <section class="mb-5">
+                            <h4 class="text-primary fw-bold mb-3">1. การจัดเก็บข้อมูล (Data Collection)</h4>
+                            <p class="text-silver small lh-lg">
+                                เราจัดเก็บเฉพาะข้อมูลที่จำเป็นต่อการดำเนินภารกิจเท่านั้น ข้อมูลส่วนบุคคล นามสมมติ และช่องทางการติดต่อจะถูกเข้ารหัสผ่านระบบ AES-256 ทันทีที่เข้าสู่ฐานข้อมูลของเรา
+                            </p>
+                        </section>
 
-          <div class="glass-card p-4 p-md-5 lh-lg shadow-lg">
+                        <section class="mb-5">
+                            <h4 class="text-primary fw-bold mb-3">2. การทำลายข้อมูล (Data Destruction)</h4>
+                            <p class="text-silver small lh-lg">
+                                เมื่อภารกิจสิ้นสุดและมีการส่งมอบหลักฐานเรียบร้อยแล้ว ข้อมูลทั้งหมดในส่วนของ "ระหว่างการปฏิบัติงาน" จะถูกทำลายทิ้ง (Secure Wipe) ภายใน 7 วันทำการ เพื่อป้องกันการรั่วไหลในอนาคต
+                            </p>
+                        </section>
 
-            <section class="mb-5">
-              <h4 class="text-primary mb-3 fw-bold"><i class="bi bi-shield-slash me-2"></i> 1. นโยบายกำจัดร่องรอย (Zero-Trace Policy)</h4>
-              <p class="text-silver">
-                "นามสมมุติ" ถือว่าความลับของลูกค้าคือพันธกิจสูงสุด ข้อมูลที่ใช้ในปฏิบัติการทั้งหมดจะถูกจัดเก็บในรูปแบบ **Volatile Memory (RAM-Only)** ซึ่งไม่มีการบันทึกลง Hard Drive ถาวร ข้อมูลจะถูก Wipe (ทำลายทิ้ง) อย่างถาวรด้วยมาตรฐาน DoD 5220.22-M ทันทีหลังปิดภารกิจ
-              </p>
-            </section>
+                        <section class="mb-5">
+                            <h4 class="text-primary fw-bold mb-3">3. การรักษาความลับ (Confidentiality)</h4>
+                            <p class="text-silver small lh-lg">
+                                เจ้าหน้าที่ปฏิบัติการทุกคนมีหน้าที่ปฏิบัติตามสัญญาไม่เปิดเผยข้อมูล (Non-Disclosure Agreement) ข้อมูลของลูกค้าจะไม่ถูกส่งต่อให้กับบุคคลที่สามหรือหน่วยงานใดๆ เว้นแต่จะเป็นการร้องขอจากเจ้าของข้อมูลเอง
+                            </p>
+                        </section>
 
-            <section class="mb-5">
-              <h4 class="text-primary mb-3 fw-bold"><i class="bi bi-incognito me-2"></i> 2. การระบุตัวตนและข้อมูลขั้นต่ำ</h4>
-              <p class="text-silver">
-                เรายึดหลักการจัดเก็บข้อมูลน้อยที่สุด (Data Minimization) เพื่อป้องกันความเสี่ยงแก่ผู้ใช้บริการ:
-              </p>
-              <ul class="text-muted list-unstyled ps-3">
-                <li class="mb-2"><i class="bi bi-dash text-primary me-2"></i> ไม่จำเป็นต้องใช้ชื่อจริง - สนับสนุนให้ใช้นามสมมุติในการสื่อสาร</li>
-                <li class="mb-2"><i class="bi bi-dash text-primary me-2"></i> ไม่เก็บ Log หมายเลข IP - ทุกการเข้าถึงเว็บนี้จะถูกปกปิดผ่านระบบ Secure Proxy</li>
-                <li class="mb-2"><i class="bi bi-dash text-primary me-2"></i> ข้อมูลเป้าหมาย - จะถูกใช้เพื่อการวิเคราะห์ใน "ห้องปฏิบัติการปิด" เท่านั้น</li>
-              </ul>
-            </section>
+                        <section>
+                            <h4 class="text-primary fw-bold mb-3">4. มาตรฐานความปลอดภัย (Security Standard)</h4>
+                            <p class="text-silver small lh-lg mb-0">
+                                เว็บไซต์และระบบสื่อสารของเราใช้การเชื่อมต่อแบบ End-to-End Encryption และมีระบบตรวจสอบการบุกรุก (IDS) ตลอด 24 ชั่วโมง เพื่อให้มั่นใจว่าการสื่อสารระหว่างท่านและเราปลอดภัยที่สุด
+                            </p>
+                        </section>
+                    </div>
 
-            <section class="mb-5">
-              <h4 class="text-primary mb-3 fw-bold"><i class="bi bi-lock-fill me-2"></i> 3. มาตรการความปลอดภัยทางไซเบอร์</h4>
-              <p class="text-silver">
-                ทุกการสื่อสารระหว่างคุณและ Agent ของเรา จะต้องผ่านช่องทาง **End-to-End Encryption (E2EE)** เท่านั้น เราขอสงวนสิทธิ์ไม่รับผิดชอบข้อมูลที่รั่วไหลจากการส่งผ่านช่องทางปกติ (เช่น SMS หรือ Email ธรรมดา) แนะนำให้ใช้ Telegram Secret Chat หรือ Signal เป็นหลัก
-              </p>
-            </section>
-
-            <section class="mb-5">
-              <h4 class="text-primary mb-3 fw-bold"><i class="bi bi-bank2 me-2"></i> 4. เส้นทางการเงินและธุรกรรม</h4>
-              <p class="text-silver">
-                เพื่อความปลอดภัยสูงสุดของลูกค้า เราสนับสนุนการชำระค่าปฏิบัติการผ่านสกุลเงินดิจิทัล (Cryptocurrency) เพื่อป้องกันการตรวจสอบเส้นทางการเงิน (Financial Trace) โดยเราจะจัดเตรียมกระเป๋าเงินชั่วคราว (One-time Wallet) ให้ในแต่ละเคส
-              </p>
-            </section>
-
-            <div class="p-3 bg-primary bg-opacity-10 border border-primary border-opacity-25 rounded-4 mt-5">
-              <div class="row align-items-center">
-                <div class="col-md-2 text-center mb-3 mb-md-0">
-                  <i class="bi bi-cpu-fill fs-1 text-primary"></i>
+                    <div class="mt-5 text-center">
+                        <p class="text-muted small">หากมีข้อสงสัยเกี่ยวกับมาตรการความปลอดภัย โปรดติดต่อฝ่ายเทคนิคทางอีเมล</p>
+                        <a href="contact.html" class="text-primary text-decoration-none font-monospace small">BACK_TO_INTEL_CONTACT</a>
+                    </div>
                 </div>
-                <div class="col-md-10">
-                  <p class="small text-primary mb-1 fw-bold">
-                    AES-256 BIT ENCRYPTION ENABLED
-                  </p>
-                  <p class="x-small text-muted mb-0">
-                    เอกสารฉบับนี้มีผลบังคับใช้ทันที ข้อมูลของคุณจะถูกปกป้องภายใต้จรรยาบรรณของหน่วยปฏิบัติการนามสมมุติ อัปเดตล่าสุด: 2025-12-18
-                  </p>
-                </div>
-              </div>
             </div>
-          </div>
-
-          <div class="text-center mt-5">
-            <a href="index.html" class="btn btn-outline-primary rounded-pill px-5 py-2">
-              <i class="bi bi-arrow-left me-2"></i> ยืนยันการรับทราบและกลับสู่หน้าหลัก
-            </a>
-          </div>
-
         </div>
-      </div>
-    </div>
-  </main>
+    </main>
 
-  <div id="footer-placeholder"></div>
+    <div id="footer-placeholder"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="assets/js/utils.js"></script>
-  <script src="assets/js/app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/render.js"></script>
 </body>
 </html>
