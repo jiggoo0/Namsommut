@@ -1,0 +1,146 @@
+/**
+ * Namsommut Investigation - Main Style Engine
+ * 🛡️ Theme: Elite Dark / Cyber Noir
+ * 🟢 Version: 2.0.1
+ */
+
+/* 1. Root Variables & Reset */
+:root {
+    --primary-color: #007bff;
+    --primary-glow: rgba(0, 123, 255, 0.5);
+    --bg-dark: #050505;
+    --bg-section: #0a0a0b;
+    --card-bg: #111112;
+    --text-main: #e0e0e0;
+    --text-muted: #888888;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --transition-smooth: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: 'Sarabun', sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+/* 2. Global Utilities */
+.tracking-widest { letter-spacing: 0.2em; }
+.tracking-tighter { letter-spacing: -1px; }
+
+.text-gradient-primary {
+    background: linear-gradient(90deg, #007bff, #00d4ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* 3. Layout Components */
+.bg-dark-section {
+    background-color: var(--bg-section);
+}
+
+.backdrop-blur {
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+/* 4. Service & Team Cards */
+.bg-card-custom {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    transition: var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+}
+
+.shadow-hover:hover {
+    transform: translateY(-10px);
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 15px 40px rgba(0, 123, 255, 0.15) !important;
+}
+
+/* 5. Custom Buttons */
+.btn-primary {
+    background-color: var(--primary-color);
+    border: none;
+    font-weight: 600;
+    transition: var(--transition-smooth);
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px var(--primary-glow);
+}
+
+/* 6. Animations & Effects */
+
+/* Scanline Effect: กิมมิคเส้นสแกนวิ่งผ่านหน้าจอ */
+body::before {
+    content: " ";
+    display: block;
+    position: fixed;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+    z-index: 9999;
+    background-size: 100% 2px, 3px 100%;
+    pointer-events: none;
+    opacity: 0.3;
+}
+
+/* Fade In Up */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: var(--transition-smooth);
+}
+
+.animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Ticker Animation for Header/Footer */
+@keyframes ticker {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+.animate-ticker {
+    display: inline-block;
+    animation: ticker 25s linear infinite;
+}
+
+/* Pulse Glow for LINE button */
+.shadow-pulse {
+    animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+    0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.4); }
+    70% { box-shadow: 0 0 0 15px rgba(0, 123, 255, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0); }
+}
+
+/* 7. Image Grayscale to Color */
+.grayscale {
+    filter: grayscale(100%) brightness(0.7);
+    transition: var(--transition-smooth);
+}
+
+.grayscale:hover {
+    filter: grayscale(0%) brightness(1);
+}
+
+/* 8. Responsive Adjustments */
+@media (max-width: 768px) {
+    .display-2 { font-size: 2.5rem; }
+    .display-3 { font-size: 2rem; }
+    
+    .nav-glass-modern {
+        margin: 10px !important;
+        border-radius: 20px !important;
+    }
+}

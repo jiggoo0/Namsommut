@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บริการปฏิบัติการ | Namsommut Investigation</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+
+    <style>
+        .step-num { font-size: 1.25rem; min-width: 40px; }
+        .badge-status { 
+            background: rgba(0, 123, 255, 0.1); 
+            color: var(--primary-color);
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            display: inline-block;
+            border: 1px solid rgba(0, 123, 255, 0.2);
+        }
+        .btn-filter.active {
+            background-color: var(--primary-color) !important;
+            color: white !important;
+            border-color: var(--primary-color) !important;
+        }
+    </style>
+</head>
+<body class="bg-dark text-white">
+
+    <div id="header-placeholder"></div>
+
+    <main>
+        <section class="section-padding" style="margin-top: 80px; background: radial-gradient(circle at top, #0d0d0f 0%, #050505 100%);">
+            <div class="container">
+                <div class="row justify-content-center text-center">
+                    <div class="col-lg-8 animate-on-scroll">
+                        <div class="badge-status mb-3 shadow-pulse text-uppercase tracking-widest">
+                            <i class="bi bi-shield-lock-fill me-2"></i>Mission Catalog Active
+                        </div>
+                        <h1 class="display-4 fw-bold text-gradient-blue mb-4">บริการปฏิบัติการลับ</h1>
+                        <p class="text-muted lead px-lg-5">
+                            เลือกประเภทภารกิจที่ต้องการ ทุกขั้นตอนดำเนินการภายใต้โปรโตคอลความลับสูงสุด 
+                            เข้าถึง Layer ข้อมูลที่ระบบปกติไม่สามารถเปิดเผยได้
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-padding bg-dark-section border-top border-white border-opacity-5">
+            <div class="container">
+                <div class="d-flex justify-content-center gap-2 mb-5 flex-wrap animate-on-scroll">
+                    <button class="btn btn-sm btn-outline-primary btn-filter rounded-pill px-4 active" onclick="filterServices('all')">ทั้งหมด</button>
+                    <button class="btn btn-sm btn-outline-secondary btn-filter rounded-pill px-4" onclick="filterServices('Exclusive Intel')">ดึงข้อมูลเชิงลึก</button>
+                    <button class="btn btn-sm btn-outline-secondary btn-filter rounded-pill px-4" onclick="filterServices('High-Stakes Ops')">ติดตามพิกัด</button>
+                    <button class="btn btn-sm btn-outline-secondary btn-filter rounded-pill px-4" onclick="filterServices('Digital Security')">ความปลอดภัยไซเบอร์</button>
+                </div>
+
+                <div id="service-list" class="row g-4">
+                    <div class="col-12 text-center py-5">
+                        <div class="spinner-border text-primary mb-3" role="status"></div>
+                        <p class="font-monospace x-small text-muted text-uppercase tracking-widest">
+                            Establishing Encrypted Connection to Database...
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        
+
+        <section class="section-padding border-top border-white border-opacity-10 bg-dark">
+            <div class="container">
+                <div class="row g-5 align-items-center">
+                    <div class="col-lg-6 animate-on-scroll">
+                        <h2 class="fw-bold mb-4">ขั้นตอนการเริ่มภารกิจ <span class="text-primary">(SOP)</span></h2>
+                        
+                        <div class="step-item d-flex mb-4">
+                            <div class="step-num text-primary fw-bold font-monospace me-3">01.</div>
+                            <div>
+                                <h6 class="fw-bold text-white">วิเคราะห์เป้าหมาย (Target Analysis)</h6>
+                                <p class="small text-muted mb-0">เจ้าหน้าที่ประเมินช่องโหว่และความเป็นไปได้ในการเข้าถึงข้อมูลอย่างปลอดภัย</p>
+                            </div>
+                        </div>
+
+                        <div class="step-item d-flex mb-4">
+                            <div class="step-num text-primary fw-bold font-monospace me-3">02.</div>
+                            <div>
+                                <h6 class="fw-bold text-white">เปิดปฏิบัติการ (Active Mission)</h6>
+                                <p class="small text-muted mb-0">ทีมปฏิบัติการแฝงตัวหรือใช้เครื่องมือเจาะระบบเพื่อดึงข้อมูลตามกำหนดการ</p>
+                            </div>
+                        </div>
+
+                        <div class="step-item d-flex">
+                            <div class="step-num text-primary fw-bold font-monospace me-3">03.</div>
+                            <div>
+                                <h6 class="fw-bold text-white">ส่งมอบและล้างร่องรอย (Delivery & Purge)</h6>
+                                <p class="small text-muted mb-0">ส่งมอบผลลัพธ์ผ่านช่องทางเข้ารหัส และลบประวัติการทำงานในระบบทั้งหมด</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 animate-on-scroll">
+                        <div class="glass-card p-4 border-primary border-opacity-20 bg-primary bg-opacity-5">
+                            <h5 class="fw-bold text-primary mb-3">
+                                <i class="bi bi-shield-exclamation me-2"></i>เงื่อนไขการปฏิบัติการ
+                            </h5>
+                            <ul class="small text-muted lh-lg mb-0">
+                                <li><strong>Security First:</strong> เราไม่รับงานที่เสี่ยงต่อการเปิดเผยตัวตนลูกค้าในระดับที่คุมไม่ได้</li>
+                                <li><strong>Dynamic Pricing:</strong> งบประมาณปรับเปลี่ยนตามระดับความปลอดภัยที่ต้องใช้</li>
+                                <li><strong>Payment:</strong> รองรับ Thai Banking และ Cryptocurrency (USDT/BTC/XMR)</li>
+                                <li><strong>Refund Policy:</strong> หากไม่พบข้อมูลตาม Scope ที่ตกลง เรายินดีคืนเครดิตตามสัดส่วนที่ระบุในสัญญา</li>
+                            </ul>
+                        </div>
+                        <div class="mt-4 text-center">
+                            <a href="contact.html" class="btn btn-primary w-100 rounded-pill py-3 fw-bold">
+                                <i class="bi bi-chat-dots-fill me-2"></i> ปรึกษา Agent เพื่อประเมินราคา
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/render.js"></script>
+
+    <script>
+        /**
+         * ระบบ Filter บริการเบื้องต้น (Client-side)
+         */
+        function filterServices(category) {
+            const buttons = document.querySelectorAll('.btn-filter');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.innerText.includes(category) || (category === 'all' && btn.innerText === 'ทั้งหมด')) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // ตรวจสอบว่าฟังก์ชันใน render.js มีการรองรับ filter หรือไม่
+            // ถ้าใช้ระบบดึง JSON ปกติ ตัวแปรจะถูกจัดเก็บใน render.js
+            if (typeof window.renderServices === 'function') {
+                window.renderServices(category);
+            }
+        }
+    </script>
+</body>
+</html>

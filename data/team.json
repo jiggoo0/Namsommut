@@ -1,0 +1,27 @@
+[{
+  "id": "member-01",
+  "name": "Alpha (The Operator)",
+  "role": "Field Intelligence Director",
+  "specialty": "การระบุพิกัดบุคคลและยุทธวิธีภาคสนาม",
+  "bio": "ผู้กุมเครือข่ายสายข่าวภาคสนามทั่วประเทศ เชี่ยวชาญการแกะรอยพิกัดสด (Real-time Tracking) และการเข้าถึงพื้นที่ปิดเพื่อเก็บหลักฐานสำคัญที่ระบบดิจิทัลเข้าไม่ถึง",
+  "image": "assets/img/team1.jpg",
+  "icon": "bi-crosshair"
+},
+  {
+    "id": "member-02",
+    "name": "Neon (The Architect)",
+    "role": "Digital Forensic Specialist",
+    "specialty": "OSINT & Private Database Access",
+    "bio": "ผู้เชี่ยวชาญการเจาะฐานข้อมูลปิดและการกู้คืนร่องรอยดิจิทัล สามารถเข้าถึงข้อมูลทะเบียนราษฎร์แฝงและประวัติที่ถูกลบออกจากระบบสารสนเทศทั่วไป",
+    "image": "assets/img/team2.jpg",
+    "icon": "bi-cpu-fill"
+  },
+  {
+    "id": "member-03",
+    "name": "Echo (The Fixer)",
+    "role": "Strategic Analyst & Liaison",
+    "specialty": "การวิเคราะห์ช่องโหว่และประสานงานภายใน",
+    "bio": "ที่ปรึกษาด้านการจัดการหลักฐานและการปิดช่องโหว่ทางกฎหมาย ทำหน้าที่เปลี่ยน 'ข้อมูลลับ' ให้เป็น 'อำนาจต่อรอง' ที่ทรงประสิทธิภาพที่สุดสำหรับลูกค้า",
+    "image": "assets/img/team3.jpg",
+    "icon": "bi-file-earmark-lock-fill"
+  }]

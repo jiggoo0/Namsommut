@@ -1,0 +1,132 @@
+<header class="main-header fixed-top animate-fade-in" style="z-index: 1030;">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-75 backdrop-blur border-bottom border-white border-opacity-10 py-3">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <div class="logo-wrapper me-2">
+                    <i class="bi bi-fingerprint fs-2 text-primary"></i>
+                </div>
+                <div class="brand-text">
+                    <span class="d-block fw-bold tracking-tighter fs-4 lh-1">NAMSOMMUT</span>
+                    <small class="text-uppercase opacity-50 tracking-widest" style="font-size: 0.6rem;">Elite Investigation</small>
+                </div>
+            </a>
+
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#namsommutNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="namsommutNav">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link px-3 text-uppercase small tracking-wider hover-primary" href="index.html">หน้าหลัก</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 text-uppercase small tracking-wider hover-primary" href="about.html">เกี่ยวกับเรา</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 text-uppercase small tracking-wider hover-primary" href="#services">บริการลับ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 text-uppercase small tracking-wider hover-primary" href="contact.html">ส่งคำขอสืบสวน</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center">
+                    <div class="access-status d-none d-xl-flex align-items-center me-4 opacity-50">
+                        <span class="dot-blink bg-success me-2"></span>
+                        <small class="text-uppercase x-small">Secured Connection</small>
+                    </div>
+                    <a href="https://line.me/ti/p/PCE92r2xrB" target="_blank" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm">
+                        <i class="bi bi-incognito me-2"></i> ปรึกษาด่วน
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="status-bar bg-primary bg-opacity-10 py-1 border-bottom border-primary border-opacity-10 d-none d-md-block">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center overflow-hidden">
+                <div class="ticker-wrapper">
+                    <small class="text-primary x-small text-uppercase fw-bold animate-ticker">
+                        System Update: ฐานข้อมูลล่าสุด 18 ธ.ค. 2025 | ตรวจพบการเข้าใช้งานจาก IP: [REDACTED] | สถานะเครือข่าย: เข้ารหัส 256-bit
+                    </small>
+                </div>
+                <div class="time-wrapper">
+                    <small id="current-time" class="text-white opacity-50 x-small"></small>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<style>
+    /* Navigation Styles */
+    .backdrop-blur {
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+    }
+
+    .tracking-tighter { letter-spacing: -1px; }
+    .tracking-wider { letter-spacing: 2px; }
+    .x-small { font-size: 0.65rem; }
+
+    .nav-link {
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .hover-primary:hover {
+        color: #007bff !important;
+    }
+
+    /* Dot Blink Animation */
+    .dot-blink {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+    }
+
+    /* Ticker Animation */
+    .ticker-wrapper {
+        white-space: nowrap;
+    }
+
+    .animate-ticker {
+        display: inline-block;
+        animation: ticker 20s linear infinite;
+    }
+
+    @keyframes ticker {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+    }
+
+    /* Header Fade In */
+    .animate-fade-in {
+        animation: fadeInDown 0.8s ease-out forwards;
+    }
+
+    @keyframes fadeInDown {
+        from { opacity: 0; transform: translateY(-20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+
+<script>
+    // แสดงเวลาแบบ Real-time ใน Header
+    function updateHeaderTime() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('en-GB', { hour12: false });
+        const dateString = now.toLocaleDateString('th-TH');
+        document.getElementById('current-time').innerText = `LOCAL TIME: ${timeString} | ${dateString}`;
+    }
+    setInterval(updateHeaderTime, 1000);
+    updateHeaderTime();
+</script>

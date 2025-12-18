@@ -1,0 +1,180 @@
+/**
+ * Namsommut Investigation - Responsive Adaptive Engine
+ * 📱 Optimizing for Mobile, Tablet, and Desktop
+ * 🛡️ Status: Fully Operational | Breakpoints: Bootstrap Standard
+ */
+
+/* ==========================================================================
+   1. Large Devices (Desktop - 1200px and up)
+   ========================================================================== */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+}
+
+/* ==========================================================================
+   2. Medium Devices (Tablets - Less than 992px)
+   ========================================================================== */
+@media (max-width: 991.98px) {
+    /* Navbar Glass Design for Mobile */
+    .navbar-collapse {
+        background: rgba(10, 10, 11, 0.98);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        margin-top: 15px;
+        padding: 25px;
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    }
+
+    .nav-link {
+        padding: 15px 0 !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        font-size: 1.1rem;
+    }
+
+    .nav-link:last-child {
+        border-bottom: none;
+    }
+
+    /* Hero Text Adjustments */
+    .display-2 {
+        font-size: 3.2rem;
+    }
+    
+    .hero-section {
+        padding: 140px 0 80px 0;
+        text-align: center;
+    }
+
+    /* Adjust Glass Cards for Tablet Grid */
+    .glass-card {
+        margin-bottom: 20px;
+    }
+}
+
+/* ==========================================================================
+   3. Small Devices (Phones - Less than 768px)
+   ========================================================================== */
+@media (max-width: 767.98px) {
+    /* Header & Typography */
+    .display-2 {
+        font-size: 2.4rem;
+        line-height: 1.2;
+    }
+
+    .display-4 {
+        font-size: 2rem;
+    }
+
+    .lead {
+        font-size: 1rem;
+        padding: 0 10px;
+    }
+
+    /* Action Buttons (Full-Width for Thumb Reach) */
+    .hero-buttons {
+        flex-direction: column;
+        display: flex;
+        gap: 12px !important;
+    }
+
+    .btn-lg {
+        width: 100%;
+        padding: 16px;
+        font-size: 1.1rem;
+    }
+
+    /* Operational Services Grid */
+    #service-list .col-lg-6 {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    /* Hide Complex UI elements to maintain clean UX */
+    .system-status-update, 
+    .status-bar,
+    .desktop-only {
+        display: none !important;
+    }
+
+    /* Footer adjustments */
+    .footer-brand {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .security-badges {
+        justify-content: center;
+        gap: 10px;
+    }
+
+    /* Team Member Profile Scaling */
+    .team-card img {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .section-padding {
+        padding: 60px 0;
+    }
+}
+
+/* ==========================================================================
+   4. Extra Small Devices (Small Phones - Less than 480px)
+   ========================================================================== */
+@media (max-width: 480px) {
+    .display-2 {
+        font-size: 1.9rem;
+    }
+
+    .brand-text {
+        font-size: 1.1rem !important;
+    }
+
+    .container {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+
+    /* Scale down large icons */
+    .icon-box i {
+        font-size: 2rem !important;
+    }
+}
+
+/* ==========================================================================
+   5. Special Adjustments (Navbar & Orientation)
+   ========================================================================== */
+   
+/* Floating Glass Navbar logic */
+@media (max-width: 991.98px) {
+    .nav-glass-modern {
+        margin: 12px !important;
+        border-radius: 18px !important;
+        width: calc(100% - 24px) !important;
+    }
+}
+
+/* Horizontal/Landscape Fix */
+@media (max-height: 500px) and (orientation: landscape) {
+    .hero-section {
+        min-height: 140vh;
+        padding-top: 100px;
+    }
+    .navbar-collapse {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+}
+
+/* Animation Disabling for Low Motion Users */
+@media (prefers-reduced-motion: reduce) {
+    .animate-on-scroll {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+}

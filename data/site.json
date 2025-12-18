@@ -1,0 +1,17 @@
+{
+  "company_name": "Namsommut Investigation",
+  "company_name_en": "Namsommut Group",
+  "slogan": "Beyond the System, Behind the Truth - เข้าถึงความจริงที่ระบบปิดกั้น",
+  "description": "หน่วยปฏิบัติการข่าวกรองอิสระ ผสมผสานเทคโนโลยีเจาะร่องรอยดิจิทัลและเครือข่ายสายข่าววงใน เพื่อมอบคำตอบที่คุณหาจากระบบปกติไม่ได้.. ไม่ต้องถามว่าเราทำอย่างไร ให้ดูที่ผลลัพธ์",
+  "contact": {
+    "email": "operation@namsommut.com",
+    "phone": "สายด่วนปฏิบัติการ (เฉพาะเคสยืนยัน)",
+    "address": "Secure Location (กรุณานัดหมายผ่านช่องทางลับ)",
+    "working_hours": "Operations 24/7"
+  },
+  "social": {
+    "line": "https://line.me/ti/p/PCE92r2xrB",
+    "telegram": "@namsommut_ops",
+    "note": "แนะนำให้ติดต่อผ่าน Telegram เพื่อความปลอดภัยสูงสุด"
+  }
+}

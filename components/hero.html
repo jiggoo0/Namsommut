@@ -1,0 +1,72 @@
+<section class="hero-section position-relative overflow-hidden min-vh-100 d-flex align-items-center bg-dark">
+    <div class="hero-overlay position-absolute w-100 h-100" style="background: linear-gradient(135deg, rgba(10, 10, 11, 0.95) 0%, rgba(10, 10, 11, 0.7) 100%); z-index: 1;"></div>
+    
+    <div class="hero-bg-effect position-absolute w-100 h-100" style="background-image: url('assets/img/banner.jpg'); background-size: cover; background-position: center; opacity: 0.3; filter: grayscale(100%);"></div>
+
+    <div class="container position-relative" style="z-index: 2;">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center">
+                <div class="d-inline-flex align-items-center mb-4 px-3 py-1 border border-primary border-opacity-50 rounded-pill bg-primary bg-opacity-10 animate-fade-in">
+                    <span class="pulse-dot me-2"></span>
+                    <small class="text-primary fw-bold text-uppercase tracking-widest" style="font-size: 0.75rem;">Status: Operations Active (24/7)</small>
+                </div>
+
+                <h1 class="display-2 fw-bold text-white mb-3">
+                    เมื่อระบบปกติ <span class="text-gradient-blue">เข้าไม่ถึง...</span><br>
+                    <span class="h2 d-block mt-2 fw-light opacity-75">ให้เราเป็นคำตอบสุดท้ายของคุณ</span>
+                </h1>
+
+                <p class="lead text-muted mx-auto mb-5" style="max-width: 700px;">
+                    หน่วยปฏิบัติการสืบสวนอิสระ ผสมผสานเทคโนโลยีการสืบค้นชั้นสูงและเครือข่ายสายข่าวเฉพาะกิจ 
+                    <span class="text-white">เข้าถึงทุกชั้นข้อมูล ปกปิดตัวตนลูกค้า 100%</span>
+                </p>
+
+                <div class="d-grid gap-3 d-sm-flex justify-content-sm-center align-items-center">
+                    <a href="https://line.me/ti/p/PCE92r2xrB" target="_blank" class="btn btn-primary btn-lg px-5 py-3 rounded-pill shadow-pulse d-flex align-items-center justify-content-center">
+                        <i class="bi bi-line fs-4 me-2"></i>
+                        <span>ปรึกษาเคสลับผ่าน LINE</span>
+                    </a>
+                    <a href="#services" class="btn btn-outline-light btn-lg px-5 py-3 rounded-pill hover-slide">
+                        <i class="bi bi-shield-lock me-2"></i> บริการและอัตราค่าจ้าง
+                    </a>
+                </div>
+
+                <div class="mt-5 row g-3 justify-content-center opacity-50">
+                    <div class="col-auto d-flex align-items-center mx-3">
+                        <i class="bi bi-check2-circle me-2"></i> <small>Zero-Trace Policy</small>
+                    </div>
+                    <div class="col-auto d-flex align-items-center mx-3">
+                        <i class="bi bi-lock me-2"></i> <small>Military Grade Encryption</small>
+                    </div>
+                    <div class="col-auto d-flex align-items-center mx-3">
+                        <i class="bi bi-eye-slash me-2"></i> <small>Anonymous Consultation</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="scroll-down"></div>
+</section>
+
+<style>
+    /* Gradient Text */
+    .text-gradient-blue {
+        background: linear-gradient(90deg, #007bff, #00d4ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Pulse Dot for Status */
+    .pulse-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #007bff;
+        border-radius: 50%;
+        box-shadow: 0 0 0 rgba(0, 123, 255, 0.4);
+        animation: pulse-dot-anim 1.5s infinite;
+    }
+
+    @keyframes pulse-dot-anim {
+        0% { box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7); }
+        70% { box-shadow
